@@ -3,16 +3,23 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X, PackageOpen } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
-import { products, brands, allSizes } from "@/lib/products";
+import {
+  getAllSizes,
+  getBrands,
+  type Product,
+} from "@/lib/products";
 
 type SortKey = "default" | "termurah" | "termahal";
 
-export function CatalogSection() {
+export function CatalogSection({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
   const [brand, setBrand] = useState("Semua");
   const [size, setSize] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("default");
   const [hideSold, setHideSold] = useState(true);
+
+  const brands = useMemo(() => getBrands(products), [products]);
+  const allSizes = useMemo(() => getAllSizes(products), [products]);
 
   const isFiltered =
     query !== "" || brand !== "Semua" || size !== null || sort !== "default";
@@ -45,11 +52,10 @@ export function CatalogSection() {
     if (sort === "termahal") list.sort((a, b) => b.price - a.price);
 
     return list;
-  }, [query, brand, size, sort, hideSold]);
+  }, [products, query, brand, size, sort, hideSold]);
 
   return (
     <div className="flex flex-col gap-10 lg:flex-row">
-      {/* ---------- Sidebar filter ---------- */}
       <aside className="w-full flex-shrink-0 lg:w-72">
         <div className="sticky top-28 space-y-6 rounded-xl border border-neutral-800 bg-neutral-900/60 p-6">
           <div className="flex items-center justify-between">
@@ -66,7 +72,6 @@ export function CatalogSection() {
             )}
           </div>
 
-          {/* Pencarian */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
               Cari Sepatu
@@ -82,7 +87,6 @@ export function CatalogSection() {
             </div>
           </div>
 
-          {/* Merek */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
               Merek
@@ -99,7 +103,6 @@ export function CatalogSection() {
             </select>
           </div>
 
-          {/* Ukuran */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
               Ukuran
@@ -121,7 +124,6 @@ export function CatalogSection() {
             </div>
           </div>
 
-          {/* Urutkan */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
               Urutkan Harga
@@ -149,13 +151,17 @@ export function CatalogSection() {
         </div>
       </aside>
 
-      {/* ---------- Hasil ---------- */}
       <div className="flex-1">
         <p className="mb-6 text-sm text-neutral-400">
           Menampilkan{" "}
           <span className="font-bold text-yellow-400">{result.length}</span>{" "}
           produk
-          {size && <> untuk ukuran <span className="font-bold text-white">{size}</span></>}
+          {size && (
+            <>
+              {" "}
+              untuk ukuran <span className="font-bold text-white">{size}</span>
+            </>
+          )}
         </p>
 
         {result.length > 0 ? (

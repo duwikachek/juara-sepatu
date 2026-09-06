@@ -5,37 +5,38 @@ import { ArrowLeft, Check, ShieldCheck, Truck } from "lucide-react";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductPurchase } from "@/components/product-purchase";
 import { ProductCard } from "@/components/product-card";
+import { formatRupiah } from "@/lib/products";
 import {
-  formatRupiah,
   getProductBySlug,
+  getProductSlugs,
   getRelated,
-  products,
-} from "@/lib/products";
+} from "@/lib/data";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const slugs = await getProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Produk Tidak Ditemukan" };
 
   return {
     title: product.name,
     description: product.description,
-    openGraph: { images: [product.images[0]] },
+    openGraph: { images: product.images?.[0] ? [product.images[0]] : [] },
   };
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = getRelated(slug);
+  const related = await getRelated(slug);
 
   return (
     <main className="mx-auto max-w-7xl px-6 pb-24 pt-32">
@@ -76,7 +77,6 @@ export default async function ProductPage({ params }: Props) {
             {product.description}
           </p>
 
-          {/* Kondisi & poin unggulan */}
           <div className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
             <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-yellow-400">
               Kondisi: {product.condition}
@@ -94,7 +94,6 @@ export default async function ProductPage({ params }: Props) {
             </ul>
           </div>
 
-          {/* Pilih ukuran + tombol WhatsApp */}
           <ProductPurchase product={product} />
 
           <div className="mt-6 grid grid-cols-2 gap-4 text-xs text-neutral-400">

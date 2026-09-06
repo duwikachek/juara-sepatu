@@ -5,7 +5,7 @@ import { MessageCircle, Check, AlertCircle, Ruler } from "lucide-react";
 import {
   formatRupiah,
   waLink,
-  STORE_NAME,
+  FALLBACK_STORE_NAME,
   type Product,
 } from "@/lib/products";
 
@@ -16,7 +16,7 @@ export function ProductPurchase({ product }: { product: Product }) {
   );
   const [warn, setWarn] = useState(false);
 
-  const message = `Halo ${STORE_NAME}! Saya tertarik dengan produk ini:
+  const message = `Halo ${FALLBACK_STORE_NAME}! Saya tertarik dengan produk ini:
 
 *${product.name}*
 Harga: ${formatRupiah(product.price)}
