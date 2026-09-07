@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { MessageCircle, Mail } from "lucide-react";
-import { waLink } from "@/lib/products";
+import { Mail, MessageCircle } from "lucide-react";
+import {
+  FALLBACK_SETTINGS,
+  waLink,
+  type SiteSettings,
+} from "@/lib/products";
 
-/* Ikon Instagram digambar manual, tidak bergantung lucide */
 function InstagramIcon() {
   return (
     <svg
@@ -22,19 +25,29 @@ function InstagramIcon() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({
+  settings = FALLBACK_SETTINGS,
+}: {
+  settings?: SiteSettings;
+}) {
   const year = new Date().getFullYear();
+  const phone = settings.whatsapp || FALLBACK_SETTINGS.whatsapp;
+  const storeName = settings.store_name || FALLBACK_SETTINGS.store_name;
 
   return (
     <footer className="border-t border-neutral-800 bg-black">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-3">
         <div>
           <h3 className="mb-3 text-xl font-black uppercase tracking-tighter text-yellow-400">
-            Juara Sepatu.
+            {storeName}.
           </h3>
           <p className="max-w-xs text-sm leading-relaxed text-neutral-400">
-            Toko boots thrift terkurasi. Setiap pasang melalui sanitasi dan
-            restorasi premium sebelum sampai ke kaki Anda.
+            {settings.footer_text || FALLBACK_SETTINGS.footer_text}
+          </p>
+          <p className="mt-4 text-xs leading-relaxed text-neutral-500">
+            {settings.address}
+            <br />
+            {settings.hours}
           </p>
         </div>
 
@@ -77,7 +90,10 @@ export function SiteFooter() {
           </h4>
           <div className="flex gap-3">
             <a
-              href={waLink("Halo Juara Sepatu, saya mau tanya-tanya dulu.")}
+              href={waLink(
+                `Halo ${storeName}, saya mau tanya-tanya dulu.`,
+                phone
+              )}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
@@ -97,18 +113,28 @@ export function SiteFooter() {
             </a>
 
             <a
-              href="mailto:halo@juarasepatu.com"
+              href={`mailto:${settings.email || FALLBACK_SETTINGS.email}`}
               aria-label="Email"
               className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-yellow-400 hover:text-yellow-400"
             >
               <Mail className="h-5 w-5" />
             </a>
           </div>
+
+          <div className="mt-5 space-y-1 text-sm text-neutral-400">
+            <p>
+              <span className="text-neutral-500">WA:</span> +{phone}
+            </p>
+            <p>
+              <span className="text-neutral-500">Email:</span>{" "}
+              {settings.email || FALLBACK_SETTINGS.email}
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="border-t border-neutral-900 py-6 text-center text-xs text-neutral-500">
-        © {year} Juara Sepatu Thrift. All rights reserved.
+        © {year} {storeName}. All rights reserved.
       </div>
     </footer>
   );

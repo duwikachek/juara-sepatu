@@ -2,16 +2,32 @@
 
 import { useState } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
-import { waLink } from "@/lib/products";
+import {
+  FALLBACK_SETTINGS,
+  FALLBACK_STORE_NAME,
+  waLink,
+} from "@/lib/products";
 
-export function ContactForm() {
+export function ContactForm({
+  phone = FALLBACK_SETTINGS.whatsapp,
+  storeName = FALLBACK_STORE_NAME,
+}: {
+  phone?: string;
+  storeName?: string;
+}) {
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ nama: "", telp: "", pesan: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const text = `Halo Juara Sepatu!\n\n*Nama:* ${form.nama}\n*No. HP:* ${form.telp}\n\n${form.pesan}`;
-    window.open(waLink(text), "_blank");
+
+    const text = `Halo ${storeName || FALLBACK_STORE_NAME}!\n\n*Nama:* ${form.nama}\n*No. HP:* ${form.telp}\n\n${form.pesan}`;
+
+    window.open(
+      waLink(text, phone || FALLBACK_SETTINGS.whatsapp),
+      "_blank"
+    );
+
     setSent(true);
     setTimeout(() => setSent(false), 4000);
     setForm({ nama: "", telp: "", pesan: "" });
@@ -74,7 +90,7 @@ export function ContactForm() {
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 bg-yellow-400 py-4 font-black uppercase tracking-widest text-black transition hover:bg-yellow-500"
+          className="flex w-full items-center justify-center gap-2 bg-yellow-400 py-4 text-sm font-black uppercase tracking-widest text-black transition hover:bg-yellow-500"
         >
           Kirim Pesan <Send className="h-4 w-4" />
         </button>

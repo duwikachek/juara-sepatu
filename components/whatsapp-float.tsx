@@ -1,10 +1,25 @@
 import { MessageCircle } from "lucide-react";
-import { waLink } from "@/lib/products";
+import {
+  FALLBACK_SETTINGS,
+  FALLBACK_STORE_NAME,
+  waLink,
+} from "@/lib/products";
 
-export function WhatsAppFloat() {
+export function WhatsAppFloat({
+  phone = FALLBACK_SETTINGS.whatsapp,
+  storeName = FALLBACK_STORE_NAME,
+}: {
+  phone?: string;
+  storeName?: string;
+}) {
+  const number = phone || FALLBACK_SETTINGS.whatsapp;
+
   return (
     <a
-      href={waLink("Halo Juara Sepatu! Saya mau tanya stok boots.")}
+      href={waLink(
+        `Halo ${storeName || FALLBACK_STORE_NAME}! Saya mau tanya stok boots.`,
+        number
+      )}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat WhatsApp"

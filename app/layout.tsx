@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WhatsAppFloat } from "@/components/whatsapp-float";
+import { getSettings } from "@/lib/data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
     <html lang="id">
       <body
@@ -43,8 +46,11 @@ export default function RootLayout({
       >
         <SiteHeader />
         {children}
-        <SiteFooter />
-        <WhatsAppFloat />
+        <SiteFooter settings={settings} />
+        <WhatsAppFloat
+          phone={settings.whatsapp}
+          storeName={settings.store_name}
+        />
       </body>
     </html>
   );

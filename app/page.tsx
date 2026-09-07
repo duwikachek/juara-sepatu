@@ -1,222 +1,208 @@
-import Link from "next/link";
+import { ShieldCheck, Sparkles, MapPin, Phone, Mail } from "lucide-react";
+import { HeroSection } from "@/components/hero-section";
+import { ElasticGallery } from "@/components/ui/elastic-gallery";
+import { CatalogSection } from "@/components/catalog-section";
+import { ContactForm } from "@/components/contact-form";
+import { SafeImage } from "@/components/ui/safe-image";
 import {
-  Boxes,
-  CheckCircle2,
-  ImageIcon,
-  NotebookText,
-  PackagePlus,
-  Palette,
-  ShoppingBag,
-  TriangleAlert,
-} from "lucide-react";
-import { requireAdmin } from "@/lib/admin";
-import { formatRupiah } from "@/lib/products";
+  getGalleryItems,
+  getProducts,
+  getSettings,
+} from "@/lib/data";
 
-export default async function AdminDashboardPage() {
-  const { supabase, profile, isOwner } = await requireAdmin();
+export default async function Home() {
+  const [products, settings, gallery] = await Promise.all([
+    getProducts(),
+    getSettings(),
+    getGalleryItems(),
+  ]);
 
-  const { data: products } = await supabase
-    .from("products")
-    .select("id, name, price, sold, images, updated_at")
-    .order("updated_at", { ascending: false });
-
-  const list = products ?? [];
-  const total = list.length;
-  const available = list.filter((p) => !p.sold).length;
-  const sold = list.filter((p) => p.sold).length;
-  const noImage = list.filter(
-    (p) => !p.images || p.images.length === 0
-  ).length;
-  const stockValue = list
-    .filter((p) => !p.sold)
-    .reduce((sum, p) => sum + (p.price || 0), 0);
-
-  const recent = list.slice(0, 5);
+  const galleryItems = gallery.map((g, i) => ({
+    id: String(i + 1).padStart(2, "0"),
+    title: g.title,
+    category: g.category,
+    src: g.image_url,
+    alt: g.title,
+  }));
 
   return (
-    <main className="space-y-8">
-      <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-yellow-400">
-          Halo, {profile.full_name || profile.email || "Admin"}
-        </p>
-        <h1 className="text-3xl font-black uppercase tracking-tight md:text-4xl">
-          Dashboard
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-          Ringkasan toko saat ini. Kelola produk lewat menu kiri, atau langsung
-          tambah produk baru.
-        </p>
-      </div>
+    <main>
+      {/* ---------- HERO ---------- */}
+      <HeroSection settings={settings} />
 
-      {/* Statistik */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-              Total Produk
-            </span>
-            <Boxes className="h-4 w-4 text-yellow-400" />
+      {/* ---------- KOLEKSI SPESIAL ---------- */}
+      <section
+        id="koleksi"
+        className="scroll-mt-24 border-t border-neutral-800 bg-black py-16"
+      >
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-2 flex items-center gap-4">
+            <div className="h-8 w-2 bg-yellow-400" />
+            <h2 className="text-3xl font-black uppercase tracking-tight">
+              Koleksi Spesial
+            </h2>
           </div>
-          <p className="text-3xl font-black text-white">{total}</p>
+          <p className="text-neutral-400">
+            Pilihan boots langka yang baru saja direstorasi.
+          </p>
         </div>
+        <ElasticGallery items={galleryItems} />
+      </section>
 
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-              Tersedia
-            </span>
-            <CheckCircle2 className="h-4 w-4 text-green-400" />
+      {/* ---------- KATALOG ---------- */}
+      <section
+        id="katalog"
+        className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
+      >
+        <div className="mb-12">
+          <div className="mb-2 flex items-center gap-4">
+            <div className="h-8 w-2 bg-yellow-400" />
+            <h2 className="text-3xl font-black uppercase tracking-tight">
+              Katalog Sepatu
+            </h2>
           </div>
-          <p className="text-3xl font-black text-green-400">{available}</p>
-        </div>
-
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-              Terjual
-            </span>
-            <ShoppingBag className="h-4 w-4 text-orange-300" />
-          </div>
-          <p className="text-3xl font-black text-orange-300">{sold}</p>
-        </div>
-
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-              Nilai Stok
-            </span>
-            <span className="text-[10px] font-bold text-yellow-400">IDR</span>
-          </div>
-          <p className="text-xl font-black text-yellow-400 md:text-2xl">
-            {formatRupiah(stockValue)}
-          </p>
-          <p className="mt-1 text-[11px] text-neutral-500">
-            Total harga produk yang masih tersedia
+          <p className="text-neutral-400">
+            Cari berdasarkan nama, merek, atau ukuran kaki Anda.
           </p>
         </div>
-      </div>
 
-      {/* Peringatan */}
-      {noImage > 0 && (
-        <div className="flex items-start gap-3 rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm text-orange-200">
-          <TriangleAlert className="mt-0.5 h-5 w-5 flex-shrink-0" />
-          <div>
-            <p className="font-bold">{noImage} produk belum punya foto</p>
-            <p className="mt-1 text-orange-200/80">
-              Produk tanpa foto kurang menarik di katalog. Lengkapi lewat menu
-              Produk → Edit.
-            </p>
-          </div>
-        </div>
-      )}
+        <CatalogSection products={products} />
+      </section>
 
-      {/* Aksi cepat */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Link
-          href="/admin/produk/baru"
-          className="group rounded-xl border border-yellow-500/40 bg-yellow-400/10 p-5 transition hover:bg-yellow-400 hover:text-black"
-        >
-          <PackagePlus className="mb-3 h-6 w-6 text-yellow-400 group-hover:text-black" />
-          <h2 className="font-black uppercase">Tambah Produk</h2>
-          <p className="mt-1 text-sm opacity-80">
-            Upload foto dan isi detail sepatu baru.
-          </p>
-        </Link>
+      {/* ---------- TENTANG ---------- */}
+      <section
+        id="tentang"
+        className="scroll-mt-24 border-t border-neutral-800 bg-neutral-900/40 py-24"
+      >
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+            <div>
+              <div className="mb-4 flex items-center gap-4">
+                <div className="h-8 w-2 bg-yellow-400" />
+                <h2 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
+                  {settings.about_title}
+                </h2>
+              </div>
 
-        <Link
-          href="/admin/produk"
-          className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 transition hover:border-yellow-400/50"
-        >
-          <Boxes className="mb-3 h-6 w-6 text-yellow-400" />
-          <h2 className="font-black uppercase">Kelola Produk</h2>
-          <p className="mt-1 text-sm text-neutral-400">
-            Edit, tandai terjual
-            {isOwner ? ", atau hapus produk." : "."}
-          </p>
-        </Link>
+              <p className="mb-6 text-lg leading-relaxed text-neutral-300">
+                {settings.about_body_1}
+              </p>
+              <p className="mb-8 leading-relaxed text-neutral-400">
+                {settings.about_body_2}
+              </p>
 
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 transition hover:border-yellow-400/50"
-        >
-          <ShoppingBag className="mb-3 h-6 w-6 text-yellow-400" />
-          <h2 className="font-black uppercase">Lihat Toko</h2>
-          <p className="mt-1 text-sm text-neutral-400">
-            Buka tampilan publik di tab baru.
-          </p>
-        </a>
-      </div>
-
-      {/* Produk terbaru */}
-      <div className="rounded-xl border border-neutral-800 bg-neutral-900/40">
-        <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
-          <h2 className="text-sm font-black uppercase tracking-wide">
-            Produk Terbaru Diubah
-          </h2>
-          <Link
-            href="/admin/produk"
-            className="text-[11px] font-bold uppercase tracking-widest text-yellow-400 hover:underline"
-          >
-            Lihat semua
-          </Link>
-        </div>
-
-        {recent.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-neutral-500">
-            Belum ada produk.
-          </p>
-        ) : (
-          <ul className="divide-y divide-neutral-800">
-            {recent.map((p) => (
-              <li
-                key={p.id}
-                className="flex items-center justify-between gap-4 px-5 py-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate font-bold text-white">{p.name}</p>
-                  <p className="text-xs text-neutral-500">
-                    {formatRupiah(p.price)} ·{" "}
-                    {p.sold ? "Terjual" : "Tersedia"}
-                    {(!p.images || p.images.length === 0) && " · Tanpa foto"}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
+                  <ShieldCheck className="mb-2 h-6 w-6 text-yellow-400" />
+                  <h4 className="mb-1 text-sm font-bold uppercase">
+                    {settings.feature_1_title}
+                  </h4>
+                  <p className="text-xs text-neutral-400">
+                    {settings.feature_1_text}
                   </p>
                 </div>
-                <Link
-                  href={`/admin/produk/${p.id}`}
-                  className="flex-shrink-0 text-[11px] font-bold uppercase tracking-widest text-neutral-400 hover:text-yellow-400"
-                >
-                  Edit
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+                <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
+                  <Sparkles className="mb-2 h-6 w-6 text-yellow-400" />
+                  <h4 className="mb-1 text-sm font-bold uppercase">
+                    {settings.feature_2_title}
+                  </h4>
+                  <p className="text-xs text-neutral-400">
+                    {settings.feature_2_text}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-      {/* Roadmap singkat */}
-      <div>
-        <h2 className="mb-4 text-sm font-black uppercase tracking-wide text-neutral-300">
-          Menyusul
-        </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-dashed border-neutral-800 p-4">
-            <ImageIcon className="mb-2 h-5 w-5 text-neutral-500" />
-            <p className="text-sm font-bold">Galeri</p>
-            <p className="text-xs text-neutral-500">Tahap D</p>
-          </div>
-          <div className="rounded-xl border border-dashed border-neutral-800 p-4">
-            <NotebookText className="mb-2 h-5 w-5 text-neutral-500" />
-            <p className="text-sm font-bold">Teks & Kontak</p>
-            <p className="text-xs text-neutral-500">Tahap D</p>
-          </div>
-          <div className="rounded-xl border border-dashed border-neutral-800 p-4">
-            <Palette className="mb-2 h-5 w-5 text-neutral-500" />
-            <p className="text-sm font-bold">Pesanan & Tema</p>
-            <p className="text-xs text-neutral-500">Tahap E</p>
+            <div className="relative h-[450px] overflow-hidden rounded-2xl border border-neutral-800">
+              <SafeImage
+                src={settings.about_image}
+                alt={settings.about_title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              <div className="absolute inset-x-8 bottom-8">
+                <p className="mb-1 text-sm font-bold uppercase tracking-widest text-yellow-400">
+                  {settings.about_philosophy_label}
+                </p>
+                <h3 className="text-2xl font-black uppercase">
+                  {settings.about_philosophy_text}
+                </h3>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ---------- KONTAK ---------- */}
+      <section
+        id="kontak"
+        className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
+      >
+        <div className="mb-4 flex items-center gap-4">
+          <div className="h-8 w-2 bg-yellow-400" />
+          <h2 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
+            Hubungi Kami
+          </h2>
+        </div>
+        <p className="mb-12 max-w-xl text-neutral-400">
+          Ada pertanyaan seputar ukuran atau kondisi sepatu? Tim kami siap
+          membantu.
+        </p>
+
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          {/* Form kontak — nomor WA dari database */}
+          <ContactForm
+            phone={settings.whatsapp}
+            storeName={settings.store_name}
+          />
+
+          <div className="flex flex-col justify-between gap-6">
+            <div className="space-y-6 rounded-xl border border-neutral-800 bg-neutral-900/50 p-8">
+              <h3 className="text-xl font-bold uppercase text-yellow-400">
+                Informasi Kontak
+              </h3>
+
+              <div className="flex items-start gap-4">
+                <MapPin className="mt-1 h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <div>
+                  <h5 className="text-sm font-bold uppercase">Store Studio</h5>
+                  <p className="text-sm text-neutral-400">{settings.address}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Phone className="h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <div>
+                  <h5 className="text-sm font-bold uppercase">WhatsApp Admin</h5>
+                  <p className="text-sm text-neutral-400">
+                    +{settings.whatsapp}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Mail className="h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <div>
+                  <h5 className="text-sm font-bold uppercase">Email</h5>
+                  <p className="text-sm text-neutral-400">{settings.email}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-neutral-800 bg-neutral-900/30 p-6">
+              <div>
+                <p className="text-xs font-bold uppercase text-neutral-400">
+                  Jam Operasional
+                </p>
+                <p className="text-lg font-bold">{settings.hours}</p>
+              </div>
+              <span className="h-3 w-3 animate-ping rounded-full bg-green-500" />
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
