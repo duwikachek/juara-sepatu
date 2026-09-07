@@ -1,4 +1,4 @@
-import { createStaticClient } from "@/lib/supabase/static";
+import { createStaticClient, hasSupabaseEnv } from "@/lib/supabase/static";
 import {
   FALLBACK_SETTINGS,
   type GalleryItem,
@@ -7,6 +7,11 @@ import {
 } from "@/lib/products";
 
 export async function getProducts(): Promise<Product[]> {
+  if (!hasSupabaseEnv()) {
+    console.warn("getProducts: Supabase env kosong");
+    return [];
+  }
+
   const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("products")
@@ -23,6 +28,8 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProductBySlug(
   slug: string
 ): Promise<Product | null> {
+  if (!hasSupabaseEnv()) return null;
+
   const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("products")
@@ -60,12 +67,26 @@ export async function getRelated(
 }
 
 export async function getProductSlugs(): Promise<string[]> {
+  if (!hasSupabaseEnv()) {
+    console.warn("getProductSlugs: Supabase env kosong — skip static paths");
+    return [];
+  }
+
   const supabase = createStaticClient();
-  const { data } = await supabase.from("products").select("slug");
+  const { data, error } = await supabase.from("products").select("slug");
+
+  if (error) {
+    console.error("getProductSlugs error:", error.message);
+    return [];
+  }
   return (data ?? []).map((r) => r.slug as string);
 }
 
 export async function getSettings(): Promise<SiteSettings> {
+  if (!hasSupabaseEnv()) {
+    return FALLBACK_SETTINGS;
+  }
+
   const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("site_settings")
@@ -81,6 +102,8 @@ export async function getSettings(): Promise<SiteSettings> {
 }
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
+  if (!hasSupabaseEnv()) return [];
+
   const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("gallery_items")
