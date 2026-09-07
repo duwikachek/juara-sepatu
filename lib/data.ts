@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import {
   FALLBACK_SETTINGS,
   type GalleryItem,
@@ -7,7 +7,7 @@ import {
 } from "@/lib/products";
 
 export async function getProducts(): Promise<Product[]> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -23,7 +23,7 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProductBySlug(
   slug: string
 ): Promise<Product | null> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -44,7 +44,7 @@ export async function getRelated(
   const current = await getProductBySlug(slug);
   if (!current) return [];
 
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("products")
     .select("*")
@@ -60,13 +60,13 @@ export async function getRelated(
 }
 
 export async function getProductSlugs(): Promise<string[]> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("products").select("slug");
   return (data ?? []).map((r) => r.slug as string);
 }
 
 export async function getSettings(): Promise<SiteSettings> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("site_settings")
     .select("value")
@@ -81,7 +81,7 @@ export async function getSettings(): Promise<SiteSettings> {
 }
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("gallery_items")
     .select("*")

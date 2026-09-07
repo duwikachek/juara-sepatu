@@ -1,0 +1,370 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ImagePlus,
+  LoaderCircle,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
+import type { Product } from "@/lib/products";
+import {
+  createProductAction,
+  updateProductAction,
+} from "@/app/admin/produk/actions";
+
+type Mode = "create" | "edit";
+
+export function ProductForm({
+  mode,
+  product,
+}: {
+  mode: Mode;
+  product?: Product;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const [keepImages, setKeepImages] = useState<string[]>(
+    product?.images ?? []
+  );
+  const [previews, setPreviews] = useState<string[]>([]);
+
+  const title = mode === "create" ? "Tambah Produk" : "Edit Produk";
+
+  const initialHighlights = useMemo(
+    () => (product?.highlights ?? []).join("\n"),
+    [product]
+  );
+
+  const onFilesChange = (files: FileList | null) => {
+    if (!files) return;
+    const urls = Array.from(files).map((f) => URL.createObjectURL(f));
+    setPreviews(urls);
+  };
+
+  const removeKeepImage = (url: string) => {
+    setKeepImages((prev) => prev.filter((u) => u !== url));
+  };
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    // pastikan keep_images ikut
+    formData.delete("keep_images");
+    keepImages.forEach((url) => formData.append("keep_images", url));
+
+    startTransition(async () => {
+      if (mode === "create") {
+        // createProductAction akan redirect jika sukses
+        const result = await createProductAction(formData);
+        if (result && !result.ok) {
+          setError(result.message);
+        }
+        return;
+      }
+
+      formData.set("id", product?.id || "");
+      const result = await updateProductAction(formData);
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+      setSuccess(result.message);
+      setPreviews([]);
+      router.refresh();
+    });
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <Link
+            href="/admin/produk"
+            className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-yellow-400"
+          >
+            <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar
+          </Link>
+          <h1 className="text-3xl font-black uppercase tracking-tight">
+            {title}
+          </h1>
+        </div>
+
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-400 px-5 py-3 text-xs font-black uppercase tracking-widest text-black transition hover:bg-yellow-300 disabled:opacity-60"
+        >
+          {pending ? (
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {pending ? "Menyimpan..." : "Simpan Produk"}
+        </button>
+      </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="rounded-lg border border-green-500/40 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+          {success}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Kolom kiri: data utama */}
+        <div className="space-y-4 lg:col-span-2">
+          <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-yellow-400">
+              Informasi Utama
+            </h2>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Nama Produk *
+                </label>
+                <input
+                  name="name"
+                  required
+                  defaultValue={product?.name}
+                  placeholder="Red Wing Iron Ranger 8111"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Merek *
+                </label>
+                <input
+                  name="brand"
+                  required
+                  defaultValue={product?.brand}
+                  placeholder="Red Wing"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Kategori *
+                </label>
+                <input
+                  name="category"
+                  required
+                  defaultValue={product?.category}
+                  placeholder="Work Boots"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Harga (angka saja) *
+                </label>
+                <input
+                  name="price"
+                  required
+                  defaultValue={product?.price}
+                  placeholder="2500000"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Grade
+                </label>
+                <input
+                  name="grade"
+                  defaultValue={product?.grade || "Grade A"}
+                  placeholder="Grade A"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Ukuran (pisah koma/spasi)
+                </label>
+                <input
+                  name="sizes"
+                  defaultValue={(product?.sizes || []).join(", ")}
+                  placeholder="41, 42, 43"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Urutan Tampil
+                </label>
+                <input
+                  name="sort_order"
+                  type="number"
+                  defaultValue={product?.sort_order ?? 0}
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Kondisi
+                </label>
+                <input
+                  name="condition"
+                  defaultValue={product?.condition}
+                  placeholder="9.5/10 — Like New"
+                  className="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Deskripsi
+                </label>
+                <textarea
+                  name="description"
+                  rows={4}
+                  defaultValue={product?.description}
+                  placeholder="Ceritakan kondisi, bahan, dan keunggulan sepatu..."
+                  className="w-full resize-y rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                  Poin Unggulan (1 baris = 1 poin)
+                </label>
+                <textarea
+                  name="highlights"
+                  rows={4}
+                  defaultValue={initialHighlights}
+                  placeholder={"Kulit original\nSol masih tebal\nSudah deep clean"}
+                  className="w-full resize-y rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <label className="flex items-center gap-2 text-sm text-neutral-300 md:col-span-2">
+                <input
+                  type="checkbox"
+                  name="sold"
+                  defaultChecked={product?.sold}
+                  className="h-4 w-4 accent-yellow-400"
+                />
+                Tandai sebagai <strong className="text-orange-300">Terjual</strong>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Kolom kanan: foto */}
+        <div className="space-y-4">
+          <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
+            <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-yellow-400">
+              Foto Produk
+            </h2>
+
+            {keepImages.length > 0 && (
+              <div className="mb-4 grid grid-cols-2 gap-3">
+                {keepImages.map((url) => (
+                  <div
+                    key={url}
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950"
+                  >
+                    <Image
+                      src={url}
+                      alt="Foto produk"
+                      fill
+                      sizes="160px"
+                      className="object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeKeepImage(url)}
+                      className="absolute right-2 top-2 rounded-full bg-black/70 p-1.5 text-red-400 opacity-100 transition hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100"
+                      title="Hapus foto ini"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-950/60 px-4 py-8 text-center transition hover:border-yellow-400/60">
+              <ImagePlus className="h-7 w-7 text-yellow-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-300">
+                Upload Foto Baru
+              </span>
+              <span className="text-[11px] text-neutral-500">
+                JPG/PNG/WEBP · maks 5MB · bisa banyak
+              </span>
+              <input
+                type="file"
+                name="images"
+                accept="image/jpeg,image/png,image/webp,image/jpg"
+                multiple
+                className="hidden"
+                onChange={(e) => onFilesChange(e.target.files)}
+              />
+            </label>
+
+            {previews.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                  Preview upload baru
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {previews.map((url) => (
+                    <div
+                      key={url}
+                      className="relative aspect-square overflow-hidden rounded-lg border border-yellow-500/30"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviews([])}
+                  className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-neutral-500 hover:text-yellow-400"
+                >
+                  <X className="h-3.5 w-3.5" /> Bersihkan preview
+                </button>
+              </div>
+            )}
+          </div>
+
+          <p className="text-xs leading-relaxed text-neutral-500">
+            Tips: foto pertama akan jadi gambar utama di katalog. Urutan foto =
+            urutan upload + foto lama yang dipertahankan.
+          </p>
+        </div>
+      </div>
+    </form>
+  );
+}

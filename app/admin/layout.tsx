@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, ShieldCheck } from "lucide-react";
+import { Boxes, LayoutDashboard, ShieldCheck } from "lucide-react";
 import { LogoutButton } from "@/components/admin/logout-button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -40,16 +40,13 @@ export default async function AdminLayout({
           <div>
             <div className="mb-1 flex items-center gap-2 text-yellow-400">
               <ShieldCheck className="h-4 w-4" />
-
               <span className="text-[10px] font-bold uppercase tracking-widest">
                 Panel {profile.role}
               </span>
             </div>
-
             <p className="font-bold text-white">
               {profile.full_name || profile.email || user.email}
             </p>
-
             <p className="text-xs text-neutral-500">
               {profile.email || user.email}
             </p>
@@ -64,16 +61,19 @@ export default async function AdminLayout({
           <nav className="space-y-2 rounded-xl border border-neutral-800 bg-neutral-900/50 p-3">
             <Link
               href="/admin"
-              className="flex items-center gap-3 rounded-lg bg-yellow-400 px-4 py-3 text-sm font-black uppercase tracking-wider text-black"
+              className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-neutral-300 transition hover:bg-neutral-800 hover:text-yellow-400"
             >
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
             </Link>
 
-            <p className="px-4 py-3 text-xs leading-relaxed text-neutral-500">
-              Menu produk, galeri, konten, pesanan, dan tema akan ditambahkan
-              pada tahap berikutnya.
-            </p>
+            <Link
+              href="/admin/produk"
+              className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-neutral-300 transition hover:bg-neutral-800 hover:text-yellow-400"
+            >
+              <Boxes className="h-4 w-4" />
+              Produk
+            </Link>
           </nav>
         </aside>
 
