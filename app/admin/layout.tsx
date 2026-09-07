@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Boxes, LayoutDashboard, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { LogoutButton } from "@/components/admin/logout-button";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({
@@ -29,7 +29,7 @@ export default async function AdminLayout({
     profile?.active === true &&
     (profile.role === "owner" || profile.role === "staff");
 
-  if (!allowed) {
+  if (!allowed || !profile) {
     redirect("/login?error=not-admin");
   }
 
@@ -58,23 +58,7 @@ export default async function AdminLayout({
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-[230px_1fr]">
         <aside>
-          <nav className="space-y-2 rounded-xl border border-neutral-800 bg-neutral-900/50 p-3">
-            <Link
-              href="/admin"
-              className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-neutral-300 transition hover:bg-neutral-800 hover:text-yellow-400"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </Link>
-
-            <Link
-              href="/admin/produk"
-              className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-neutral-300 transition hover:bg-neutral-800 hover:text-yellow-400"
-            >
-              <Boxes className="h-4 w-4" />
-              Produk
-            </Link>
-          </nav>
+          <AdminSidebar />
         </aside>
 
         <section>{children}</section>

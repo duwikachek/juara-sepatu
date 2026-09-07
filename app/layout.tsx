@@ -5,8 +5,15 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { WhatsAppFloat } from "@/components/whatsapp-float";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -15,12 +22,20 @@ export const metadata: Metadata = {
   },
   description:
     "Toko boots thrift terkurasi. Red Wing, Dr. Martens, Timberland, Clarks — sudah direstorasi premium dan siap pakai.",
-  keywords: ["sepatu thrift", "boots bekas", "red wing", "dr martens", "timberland"],
+  keywords: [
+    "sepatu thrift",
+    "boots bekas",
+    "red wing",
+    "dr martens",
+    "timberland",
+  ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="id">
       <body
