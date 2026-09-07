@@ -10,6 +10,7 @@ import {
   getProductBySlug,
   getProductSlugs,
   getRelated,
+  getSettings,
 } from "@/lib/data";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -36,7 +37,10 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = await getRelated(slug);
+  const [related, settings] = await Promise.all([
+    getRelated(slug),
+    getSettings(),
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-6 pb-24 pt-32">
@@ -94,7 +98,11 @@ export default async function ProductPage({ params }: Props) {
             </ul>
           </div>
 
-          <ProductPurchase product={product} />
+          <ProductPurchase
+            product={product}
+            adminPhone={settings.whatsapp}
+            storeName={settings.store_name}
+          />
 
           <div className="mt-6 grid grid-cols-2 gap-4 text-xs text-neutral-400">
             <div className="flex items-center gap-2">
