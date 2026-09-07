@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, LayoutDashboard } from "lucide-react";
+import {
+  Boxes,
+  Images,
+  LayoutDashboard,
+  NotebookText,
+} from "lucide-react";
 
 function itemClass(active: boolean) {
   return active
@@ -12,8 +17,11 @@ function itemClass(active: boolean) {
 
 export function AdminSidebar() {
   const pathname = usePathname() || "/admin";
-  const onProducts = pathname.startsWith("/admin/produk");
+
   const onDashboard = pathname === "/admin";
+  const onProducts = pathname.startsWith("/admin/produk");
+  const onContent = pathname.startsWith("/admin/konten");
+  const onGallery = pathname.startsWith("/admin/galeri");
 
   return (
     <nav className="space-y-2 rounded-xl border border-neutral-800 bg-neutral-900/50 p-3">
@@ -27,8 +35,18 @@ export function AdminSidebar() {
         Produk
       </Link>
 
+      <Link href="/admin/konten" className={itemClass(onContent)}>
+        <NotebookText className="h-4 w-4" />
+        Konten
+      </Link>
+
+      <Link href="/admin/galeri" className={itemClass(onGallery)}>
+        <Images className="h-4 w-4" />
+        Galeri
+      </Link>
+
       <p className="px-4 py-3 text-xs leading-relaxed text-neutral-500">
-        Galeri, konten, pesanan, dan tema menyusul di tahap berikutnya.
+        Menu Galeri aktif di tahap D2. Pesanan & tema menyusul di tahap E.
       </p>
     </nav>
   );
