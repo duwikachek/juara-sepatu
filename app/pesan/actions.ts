@@ -50,48 +50,46 @@ export async function createOrderAction(formData: FormData) {
     return { ok: false, message: "Harga produk tidak valid." };
   }
 
-  // Cek produk masih ada & belum terjual
+  // Cek produk (tabel products sudah boleh dibaca publik)
   if (productId) {
-    const { data: product } = await supabase
+    const { data: product, error: productError } = await supabase
       .from("products")
-      .select("id, sold, name, price, slug")
+      .select("id, sold")
       .eq("id", productId)
       .maybeSingle();
 
+    if (productError) {
+      return { ok: false, message: productError.message };
+    }
     if (!product) {
       return { ok: false, message: "Produk tidak ditemukan." };
     }
     if (product.sold) {
-      return {
-        ok: false,
-        message: "Maaf, produk ini baru saja terjual.",
-      };
+      return { ok: false, message: "Maaf, produk ini baru saja terjual." };
     }
   }
 
   const orderNumber = makeOrderNumber();
 
-  const { data, error } = await supabase
-    .from("orders")
-    .insert({
-      order_number: orderNumber,
-      product_id: productId || null,
-      product_slug: productSlug,
-      product_name: productName,
-      product_price: productPrice,
-      product_size: productSize,
-      product_image: productImage,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      customer_address: customerAddress,
-      customer_note: customerNote,
-      status: "menunggu",
-    })
-    .select("id, order_number")
-    .single();
+  // PENTING: jangan .select() setelah insert
+  // supaya anon tidak perlu izin SELECT di tabel orders
+  const { error } = await supabase.from("orders").insert({
+    order_number: orderNumber,
+    product_id: productId || null,
+    product_slug: productSlug,
+    product_name: productName,
+    product_price: productPrice,
+    product_size: productSize,
+    product_image: productImage,
+    customer_name: customerName,
+    customer_phone: customerPhone,
+    customer_address: customerAddress,
+    customer_note: customerNote,
+    status: "menunggu",
+  });
 
   if (error) {
-    console.error("createOrder error:", error.message);
+    console.error("createOrder error:", error.message, error.details, error.hint);
     return {
       ok: false,
       message: error.message || "Gagal menyimpan pesanan.",
@@ -101,7 +99,6 @@ export async function createOrderAction(formData: FormData) {
   return {
     ok: true,
     message: "Pesanan berhasil dikirim.",
-    orderNumber: data.order_number as string,
-    orderId: data.id as string,
+    orderNumber,
   };
 }

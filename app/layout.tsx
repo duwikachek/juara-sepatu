@@ -32,17 +32,29 @@ export const metadata: Metadata = {
   ],
 };
 
+const ALLOWED_THEMES = [
+  "kuning-klasik",
+  "amber-vintage",
+  "militer",
+  "steel-blue",
+] as const;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const settings = await getSettings();
+  const theme = ALLOWED_THEMES.includes(
+    settings.theme as (typeof ALLOWED_THEMES)[number]
+  )
+    ? settings.theme
+    : "kuning-klasik";
 
   return (
-    <html lang="id">
+    <html lang="id" data-theme={theme}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-neutral-950 font-sans text-white antialiased selection:bg-yellow-400 selection:text-black`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-neutral-950 font-sans text-white antialiased selection:bg-brand selection:text-black`}
       >
         <SiteHeader />
         {children}

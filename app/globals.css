@@ -24,3 +24,68 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* =========================================
+   TEMA WARNA JUARA SEPATU
+   ========================================= */
+
+:root,
+[data-theme="kuning-klasik"] {
+  --brand: #facc15;
+  --brand-hover: #fde047;
+  --brand-soft: rgba(250, 204, 21, 0.12);
+  --brand-border: rgba(250, 204, 21, 0.45);
+  --brand-text: #000000;
+  --brand-shadow: rgba(250, 204, 21, 0.25);
+}
+
+[data-theme="amber-vintage"] {
+  --brand: #f59e0b;
+  --brand-hover: #fbbf24;
+  --brand-soft: rgba(245, 158, 11, 0.14);
+  --brand-border: rgba(245, 158, 11, 0.5);
+  --brand-text: #000000;
+  --brand-shadow: rgba(245, 158, 11, 0.28);
+}
+
+[data-theme="militer"] {
+  --brand: #a3b18a;
+  --brand-hover: #b5c49c;
+  --brand-soft: rgba(163, 177, 138, 0.16);
+  --brand-border: rgba(163, 177, 138, 0.5);
+  --brand-text: #0a0a0a;
+  --brand-shadow: rgba(163, 177, 138, 0.25);
+}
+
+[data-theme="steel-blue"] {
+  --brand: #38bdf8;
+  --brand-hover: #7dd3fc;
+  --brand-soft: rgba(56, 189, 248, 0.14);
+  --brand-border: rgba(56, 189, 248, 0.5);
+  --brand-text: #000000;
+  --brand-shadow: rgba(56, 189, 248, 0.28);
+}
+
+/* Utility brand — gantikan aksen kuning keras di elemen penting */
+.bg-brand {
+  background-color: var(--brand) !important;
+  color: var(--brand-text) !important;
+}
+.bg-brand:hover,
+.hover\:bg-brand-hover:hover {
+  background-color: var(--brand-hover) !important;
+}
+.text-brand {
+  color: var(--brand) !important;
+}
+.border-brand {
+  border-color: var(--brand-border) !important;
+}
+.bg-brand-soft {
+  background-color: var(--brand-soft) !important;
+}
+.shadow-brand {
+  box-shadow: 0 10px 30px var(--brand-shadow) !important;
+}
+.ring-brand {
+  --tw-ring-color: var(--brand) !important;
+}
