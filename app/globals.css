@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+/* PAKSA SELURUH ELEMEN WEBSITE MENGGUNAKAN FONT MESIN TIK SPECIAL ELITE */
+*, ::before, ::after {
+  font-family: 'Special Elite', 'Courier New', Courier, monospace !important;
+}
+
+html, body, h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, div, label, li, strong {
+  font-family: 'Special Elite', 'Courier New', Courier, monospace !important;
+}
 @import "tailwindcss";
 
 :root {
@@ -88,4 +98,19 @@ body {
 }
 .ring-brand {
   --tw-ring-color: var(--brand) !important;
+}
+/* =========================================
+   OVERRIDE TOTAL FONT MESIN TIK VINTAGE (SPECIAL ELITE)
+   ========================================= */
+
+* {
+  font-family: var(--font-typewriter), 'Special Elite', 'Courier New', Courier, monospace !important;
+}
+
+body, html, h1, h2, h3, h4, h5, h6, p, span, button, input, select, textarea, a, div, label {
+  font-family: var(--font-typewriter), 'Special Elite', 'Courier New', Courier, monospace !important;
+}
+
+.font-sans, .font-mono, .font-serif {
+  font-family: var(--font-typewriter), 'Special Elite', 'Courier New', Courier, monospace !important;
 }
