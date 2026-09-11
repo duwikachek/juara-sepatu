@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Mail, MessageCircle } from "lucide-react";
 import {
@@ -30,6 +33,7 @@ export function SiteFooter({
 }: {
   settings?: SiteSettings;
 }) {
+  const [imgError, setImgError] = useState(false);
   const year = new Date().getFullYear();
   const phone = settings.whatsapp || FALLBACK_SETTINGS.whatsapp;
   const storeName = settings.store_name || FALLBACK_SETTINGS.store_name;
@@ -38,9 +42,23 @@ export function SiteFooter({
     <footer className="border-t border-neutral-800 bg-black">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-3">
         <div>
-          <h3 className="mb-3 text-xl font-black uppercase tracking-tighter text-yellow-400">
-            {storeName}.
-          </h3>
+          {/* LOGO VINTAGE DI FOOTER */}
+          <Link href="/" className="mb-4 inline-block transition hover:opacity-80">
+            {!imgError ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src="/logo.jpg"
+                alt={storeName}
+                onError={() => setImgError(true)}
+                className="h-14 w-auto object-contain"
+              />
+            ) : (
+              <h3 className="text-xl font-black uppercase tracking-tighter text-yellow-400">
+                {storeName}.
+              </h3>
+            )}
+          </Link>
+
           <p className="max-w-xs text-sm leading-relaxed text-neutral-400">
             {settings.footer_text || FALLBACK_SETTINGS.footer_text}
           </p>
