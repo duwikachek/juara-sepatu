@@ -20,7 +20,7 @@ export function SiteHeader() {
     <header className="fixed inset-x-0 top-0 z-[100] border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
         
-        {/* LOGO VINTAGE */}
+        {/* LOGO VINTAGE DENGAN PENGAMAN UKURAN */}
         <Link href="/" className="flex items-center transition hover:opacity-80">
           {!imgError ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -28,6 +28,7 @@ export function SiteHeader() {
               src="/logo.png"
               alt="Juara Sepatu Logo"
               onError={() => setImgError(true)}
+              style={{ height: '48px', width: 'auto', maxHeight: '48px' }}
               className="h-12 w-auto object-contain py-1 md:h-14"
             />
           ) : (
