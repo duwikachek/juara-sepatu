@@ -20,6 +20,66 @@ import {
 
 type Mode = "create" | "edit";
 
+// Fungsi Kompresi Foto Otomatis di Browser HP
+async function compressImage(file: File, maxWidth = 1200, quality = 0.8): Promise<File> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/") || file.size < 300 * 1024) {
+      resolve(file);
+      return;
+    }
+
+    const img = document.createElement("img");
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxWidth) {
+        if (width > height) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxWidth) / height);
+          height = maxWidth;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const compressedFile = new File(
+            [blob],
+            file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+            {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            }
+          );
+          resolve(compressedFile);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => resolve(file);
+    img.src = url;
+  });
+}
+
 export function ProductForm({
   mode,
   product,
@@ -29,12 +89,14 @@ export function ProductForm({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const [keepImages, setKeepImages] = useState<string[]>(
     product?.images ?? []
   );
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
   const title = mode === "create" ? "Tambah Produk" : "Edit Produk";
@@ -44,14 +106,34 @@ export function ProductForm({
     [product]
   );
 
-  const onFilesChange = (files: FileList | null) => {
-    if (!files) return;
-    const urls = Array.from(files).map((f) => URL.createObjectURL(f));
-    setPreviews(urls);
+  const onFilesChange = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setCompressing(true);
+    setError("");
+
+    try {
+      const fileList = Array.from(files);
+      const compressedList = await Promise.all(
+        fileList.map((f) => compressImage(f))
+      );
+      setSelectedFiles((prev) => [...prev, ...compressedList]);
+
+      const urls = compressedList.map((f) => URL.createObjectURL(f));
+      setPreviews((prev) => [...prev, ...urls]);
+    } catch {
+      setError("Gagal memproses gambar.");
+    } finally {
+      setCompressing(false);
+    }
   };
 
   const removeKeepImage = (url: string) => {
     setKeepImages((prev) => prev.filter((u) => u !== url));
+  };
+
+  const clearNewImages = () => {
+    setSelectedFiles([]);
+    setPreviews([]);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,16 +144,24 @@ export function ProductForm({
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    // pastikan keep_images ikut
+    formData.delete("images");
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
     formData.delete("keep_images");
     keepImages.forEach((url) => formData.append("keep_images", url));
 
     startTransition(async () => {
       if (mode === "create") {
-        // createProductAction akan redirect jika sukses
         const result = await createProductAction(formData);
-        if (result && !result.ok) {
+        if (!result.ok) {
           setError(result.message);
+          return;
+        }
+        if (result.redirectUrl) {
+          router.push(result.redirectUrl);
+          router.refresh();
         }
         return;
       }
@@ -83,6 +173,7 @@ export function ProductForm({
         return;
       }
       setSuccess(result.message);
+      setSelectedFiles([]);
       setPreviews([]);
       router.refresh();
     });
@@ -105,15 +196,19 @@ export function ProductForm({
 
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || compressing}
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-400 px-5 py-3 text-xs font-black uppercase tracking-widest text-black transition hover:bg-yellow-300 disabled:opacity-60"
         >
-          {pending ? (
+          {pending || compressing ? (
             <LoaderCircle className="h-4 w-4 animate-spin" />
           ) : (
             <Save className="h-4 w-4" />
           )}
-          {pending ? "Menyimpan..." : "Simpan Produk"}
+          {compressing
+            ? "Mengecilkan Foto..."
+            : pending
+            ? "Menyimpan..."
+            : "Simpan Produk"}
         </button>
       </div>
 
@@ -129,7 +224,6 @@ export function ProductForm({
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Kolom kiri: data utama */}
         <div className="space-y-4 lg:col-span-2">
           <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-yellow-400">
@@ -276,7 +370,6 @@ export function ProductForm({
           </div>
         </div>
 
-        {/* Kolom kanan: foto */}
         <div className="space-y-4">
           <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-yellow-400">
@@ -313,15 +406,14 @@ export function ProductForm({
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-950/60 px-4 py-8 text-center transition hover:border-yellow-400/60">
               <ImagePlus className="h-7 w-7 text-yellow-400" />
               <span className="text-xs font-bold uppercase tracking-widest text-neutral-300">
-                Upload Foto Baru
+                Upload Foto Dari HP / Laptop
               </span>
               <span className="text-[11px] text-neutral-500">
-                JPG/PNG/WEBP · maks 5MB · bisa banyak
+                Otomatis dikompres & diperkecil
               </span>
               <input
                 type="file"
-                name="images"
-                accept="image/jpeg,image/png,image/webp,image/jpg"
+                accept="image/*"
                 multiple
                 className="hidden"
                 onChange={(e) => onFilesChange(e.target.files)}
@@ -331,12 +423,12 @@ export function ProductForm({
             {previews.length > 0 && (
               <div className="mt-4">
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                  Preview upload baru
+                  Preview Foto Dikompres ({previews.length})
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  {previews.map((url) => (
+                  {previews.map((url, i) => (
                     <div
-                      key={url}
+                      key={i}
                       className="relative aspect-square overflow-hidden rounded-lg border border-yellow-500/30"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -350,7 +442,7 @@ export function ProductForm({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setPreviews([])}
+                  onClick={clearNewImages}
                   className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-neutral-500 hover:text-yellow-400"
                 >
                   <X className="h-3.5 w-3.5" /> Bersihkan preview
@@ -360,8 +452,7 @@ export function ProductForm({
           </div>
 
           <p className="text-xs leading-relaxed text-neutral-500">
-            Tips: foto pertama akan jadi gambar utama di katalog. Urutan foto =
-            urutan upload + foto lama yang dipertahankan.
+            Foto dari kamera HP kamu akan otomatis diperkecil ukurannya sehingga upload di HP sangat cepat dan tidak memicu error server.
           </p>
         </div>
       </div>

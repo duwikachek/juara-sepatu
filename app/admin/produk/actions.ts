@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireAdmin, createProductSlug } from "@/lib/admin";
 
 function parseSizes(raw: string): string[] {
@@ -40,9 +39,6 @@ async function uploadProductImages(
     if (!file || file.size === 0) continue;
     if (!file.type.startsWith("image/")) {
       throw new Error(`File bukan gambar: ${file.name}`);
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error(`Gambar terlalu besar (maks 5MB): ${file.name}`);
     }
 
     const ext =
@@ -98,7 +94,6 @@ export async function createProductAction(formData: FormData) {
   const baseSlug = createProductSlug(name) || `produk-${Date.now()}`;
   let slug = baseSlug;
 
-  // Pastikan slug unik
   for (let i = 0; i < 20; i++) {
     const { data: exists } = await supabase
       .from("products")
@@ -151,7 +146,11 @@ export async function createProductAction(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/produk", "layout");
 
-  redirect(`/admin/produk/${data.id}?saved=1`);
+  return {
+    ok: true,
+    message: "Produk berhasil ditambahkan.",
+    redirectUrl: `/admin/produk/${data.id}?saved=1`,
+  };
 }
 
 export async function updateProductAction(formData: FormData) {
@@ -235,7 +234,6 @@ export async function updateProductAction(formData: FormData) {
     return { ok: false, message: error.message };
   }
 
-  // Bersihkan foto yang dibuang dari Storage (hanya file di bucket kita)
   const paths = removed
     .map(storagePathFromPublicUrl)
     .filter((p): p is string => !!p);
