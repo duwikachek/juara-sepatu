@@ -42,18 +42,17 @@ export function SiteFooter({
     <footer className="border-t border-neutral-800 bg-black">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-3">
         <div>
-          {/* LOGO VINTAGE DI FOOTER */}
           <Link href="/" className="mb-4 inline-block transition hover:opacity-80">
             {!imgError ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
-                src="/logo.jpg"
+                src="/logo.png"
                 alt={storeName}
                 onError={() => setImgError(true)}
                 className="h-14 w-auto object-contain"
               />
             ) : (
-              <h3 className="text-xl font-black uppercase tracking-tighter text-yellow-400">
+              <h3 className="text-xl font-black uppercase tracking-tighter text-brand">
                 {storeName}.
               </h3>
             )}
@@ -75,27 +74,27 @@ export function SiteFooter({
           </h4>
           <ul className="space-y-2 text-sm text-neutral-400">
             <li>
-              <Link href="/#beranda" className="hover:text-yellow-400">
+              <Link href="/#beranda" className="hover:text-brand">
                 Beranda
               </Link>
             </li>
             <li>
-              <Link href="/#koleksi" className="hover:text-yellow-400">
+              <Link href="/#koleksi" className="hover:text-brand">
                 Koleksi Spesial
               </Link>
             </li>
             <li>
-              <Link href="/#katalog" className="hover:text-yellow-400">
+              <Link href="/#katalog" className="hover:text-brand">
                 Katalog Sepatu
               </Link>
             </li>
             <li>
-              <Link href="/#tentang" className="hover:text-yellow-400">
+              <Link href="/#tentang" className="hover:text-brand">
                 Tentang Kami
               </Link>
             </li>
             <li>
-              <Link href="/#kontak" className="hover:text-yellow-400">
+              <Link href="/#kontak" className="hover:text-brand">
                 Kontak
               </Link>
             </li>
@@ -115,7 +114,7 @@ export function SiteFooter({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
-              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-yellow-400 hover:text-yellow-400"
+              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-brand hover:text-brand"
             >
               <MessageCircle className="h-5 w-5" />
             </a>
@@ -125,7 +124,7 @@ export function SiteFooter({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-yellow-400 hover:text-yellow-400"
+              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-brand hover:text-brand"
             >
               <InstagramIcon />
             </a>
@@ -133,7 +132,7 @@ export function SiteFooter({
             <a
               href={`mailto:${settings.email || FALLBACK_SETTINGS.email}`}
               aria-label="Email"
-              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-yellow-400 hover:text-yellow-400"
+              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-brand hover:text-brand"
             >
               <Mail className="h-5 w-5" />
             </a>

@@ -35,7 +35,7 @@ export function ContactForm({
 
   return (
     <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-8">
-      <h3 className="mb-6 text-xl font-bold uppercase text-yellow-400">
+      <h3 className="mb-6 text-xl font-bold uppercase text-brand">
         Kirim Pesan
       </h3>
 
@@ -56,7 +56,7 @@ export function ContactForm({
             value={form.nama}
             onChange={(e) => setForm({ ...form, nama: e.target.value })}
             placeholder="Masukkan nama kamu"
-            className="w-full rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-yellow-400"
+            className="w-full rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-brand"
           />
         </div>
 
@@ -70,7 +70,7 @@ export function ContactForm({
             value={form.telp}
             onChange={(e) => setForm({ ...form, telp: e.target.value })}
             placeholder="0812xxxxxxx"
-            className="w-full rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-yellow-400"
+            className="w-full rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-brand"
           />
         </div>
 
@@ -84,13 +84,13 @@ export function ContactForm({
             value={form.pesan}
             onChange={(e) => setForm({ ...form, pesan: e.target.value })}
             placeholder="Tanyakan seputar produk atau ukuran..."
-            className="w-full resize-none rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-yellow-400"
+            className="w-full resize-none rounded border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm outline-none focus:border-brand"
           />
         </div>
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 bg-yellow-400 py-4 text-sm font-black uppercase tracking-widest text-black transition hover:bg-yellow-500"
+          className="flex w-full items-center justify-center gap-2 bg-brand py-4 text-sm font-black uppercase tracking-widest text-black transition hover:bg-brand-hover"
         >
           Kirim Pesan <Send className="h-4 w-4" />
         </button>

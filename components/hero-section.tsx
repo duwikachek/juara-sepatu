@@ -58,7 +58,7 @@ export function HeroSection({
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="#katalog"
-            className="inline-flex w-full items-center justify-center gap-3 rounded-none bg-brand px-8 py-4 text-xs font-black uppercase tracking-widest text-black shadow-brand transition-all hover:-translate-y-1 hover:opacity-90 sm:w-auto md:text-sm"
+            className="inline-flex w-full items-center justify-center gap-3 bg-brand px-8 py-4 text-xs font-black uppercase tracking-widest text-black shadow-brand transition-all hover:-translate-y-1 hover:opacity-90 sm:w-auto md:text-sm"
           >
             Eksplorasi Sekarang <ShoppingBag className="h-5 w-5" />
           </Link>

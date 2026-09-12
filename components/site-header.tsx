@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -15,20 +14,27 @@ const links = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100] border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        {/* LOGO GAMBAR VINTAGE */}
+        
+        {/* LOGO VINTAGE */}
         <Link href="/" className="flex items-center transition hover:opacity-80">
-          <Image
-            src="/logo.jpg"
-            alt="Juara Sepatu Logo"
-            width={200}
-            height={70}
-            className="h-12 w-auto object-contain py-1 md:h-14"
-            priority
-          />
+          {!imgError ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src="/logo.png"
+              alt="Juara Sepatu Logo"
+              onError={() => setImgError(true)}
+              className="h-12 w-auto object-contain py-1 md:h-14"
+            />
+          ) : (
+            <span className="text-2xl font-black uppercase tracking-tighter text-brand">
+              JUARA SEPATU.
+            </span>
+          )}
         </Link>
 
         {/* NAVIGASI DESKTOP */}
@@ -37,7 +43,7 @@ export function SiteHeader() {
             <Link
               key={l.href}
               href={l.href}
-              className="py-2 transition-colors hover:text-yellow-400"
+              className="py-2 transition-colors hover:text-brand"
             >
               {l.label}
             </Link>
@@ -48,7 +54,7 @@ export function SiteHeader() {
         <button
           onClick={() => setOpen(!open)}
           aria-label="Buka menu"
-          className="p-2 text-yellow-400 transition hover:text-white md:hidden"
+          className="p-2 text-brand transition hover:text-white md:hidden"
         >
           {open ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
         </button>
@@ -62,7 +68,7 @@ export function SiteHeader() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="py-1 hover:text-yellow-400"
+              className="py-1 hover:text-brand"
             >
               {l.label}
             </Link>

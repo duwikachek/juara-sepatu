@@ -6,7 +6,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/produk/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/40 transition-all duration-300 hover:border-yellow-500/60 hover:bg-neutral-900"
+      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/40 transition-all duration-300 hover:border-brand hover:bg-neutral-900"
     >
       <div className="relative aspect-square overflow-hidden bg-neutral-950">
         <SafeImage
@@ -17,7 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
           className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
         />
 
-        <span className="absolute left-3 top-3 rounded bg-yellow-400 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-black">
+        <span className="absolute left-3 top-3 rounded bg-brand px-2 py-1 text-[10px] font-black uppercase tracking-wider text-black">
           {product.grade}
         </span>
 
@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.brand} · {product.category}
         </span>
 
-        <h4 className="mb-2 line-clamp-2 font-bold leading-snug transition-colors group-hover:text-yellow-400">
+        <h4 className="mb-2 line-clamp-2 font-bold leading-snug transition-colors group-hover:text-brand">
           {product.name}
         </h4>
 
@@ -50,7 +50,7 @@ export function ProductCard({ product }: { product: Product }) {
           ))}
         </div>
 
-        <p className="mt-auto text-xl font-black text-yellow-400">
+        <p className="mt-auto text-xl font-black text-brand">
           {formatRupiah(product.price)}
         </p>
       </div>

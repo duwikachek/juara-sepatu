@@ -27,17 +27,17 @@ export default async function Home() {
 
   return (
     <main>
-      {/* ---------- HERO ---------- */}
+      {/* HERO SECTION */}
       <HeroSection settings={settings} />
 
-      {/* ---------- KOLEKSI SPESIAL ---------- */}
+      {/* KOLEKSI SPESIAL */}
       <section
         id="koleksi"
         className="scroll-mt-24 border-t border-neutral-800 bg-black py-16"
       >
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-2 flex items-center gap-4">
-            <div className="h-8 w-2 bg-yellow-400" />
+            <div className="h-8 w-2 bg-brand" />
             <h2 className="text-3xl font-black uppercase tracking-tight">
               Koleksi Spesial
             </h2>
@@ -49,14 +49,14 @@ export default async function Home() {
         <ElasticGallery items={galleryItems} />
       </section>
 
-      {/* ---------- KATALOG ---------- */}
+      {/* KATALOG */}
       <section
         id="katalog"
         className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
       >
         <div className="mb-12">
           <div className="mb-2 flex items-center gap-4">
-            <div className="h-8 w-2 bg-yellow-400" />
+            <div className="h-8 w-2 bg-brand" />
             <h2 className="text-3xl font-black uppercase tracking-tight">
               Katalog Sepatu
             </h2>
@@ -69,7 +69,7 @@ export default async function Home() {
         <CatalogSection products={products} />
       </section>
 
-      {/* ---------- TENTANG ---------- */}
+      {/* TENTANG KAMI */}
       <section
         id="tentang"
         className="scroll-mt-24 border-t border-neutral-800 bg-neutral-900/40 py-24"
@@ -78,7 +78,7 @@ export default async function Home() {
           <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
             <div>
               <div className="mb-4 flex items-center gap-4">
-                <div className="h-8 w-2 bg-yellow-400" />
+                <div className="h-8 w-2 bg-brand" />
                 <h2 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
                   {settings.about_title}
                 </h2>
@@ -93,7 +93,7 @@ export default async function Home() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-                  <ShieldCheck className="mb-2 h-6 w-6 text-yellow-400" />
+                  <ShieldCheck className="mb-2 h-6 w-6 text-brand" />
                   <h4 className="mb-1 text-sm font-bold uppercase">
                     {settings.feature_1_title}
                   </h4>
@@ -102,7 +102,7 @@ export default async function Home() {
                   </p>
                 </div>
                 <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-                  <Sparkles className="mb-2 h-6 w-6 text-yellow-400" />
+                  <Sparkles className="mb-2 h-6 w-6 text-brand" />
                   <h4 className="mb-1 text-sm font-bold uppercase">
                     {settings.feature_2_title}
                   </h4>
@@ -123,7 +123,7 @@ export default async function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
               <div className="absolute inset-x-8 bottom-8">
-                <p className="mb-1 text-sm font-bold uppercase tracking-widest text-yellow-400">
+                <p className="mb-1 text-sm font-bold uppercase tracking-widest text-brand">
                   {settings.about_philosophy_label}
                 </p>
                 <h3 className="text-2xl font-black uppercase">
@@ -135,13 +135,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ---------- KONTAK ---------- */}
+      {/* KONTAK */}
       <section
         id="kontak"
         className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
       >
         <div className="mb-4 flex items-center gap-4">
-          <div className="h-8 w-2 bg-yellow-400" />
+          <div className="h-8 w-2 bg-brand" />
           <h2 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
             Hubungi Kami
           </h2>
@@ -152,7 +152,6 @@ export default async function Home() {
         </p>
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          {/* Form kontak — nomor WA dari database */}
           <ContactForm
             phone={settings.whatsapp}
             storeName={settings.store_name}
@@ -160,12 +159,12 @@ export default async function Home() {
 
           <div className="flex flex-col justify-between gap-6">
             <div className="space-y-6 rounded-xl border border-neutral-800 bg-neutral-900/50 p-8">
-              <h3 className="text-xl font-bold uppercase text-yellow-400">
+              <h3 className="text-xl font-bold uppercase text-brand">
                 Informasi Kontak
               </h3>
 
               <div className="flex items-start gap-4">
-                <MapPin className="mt-1 h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <MapPin className="mt-1 h-6 w-6 flex-shrink-0 text-brand" />
                 <div>
                   <h5 className="text-sm font-bold uppercase">Store Studio</h5>
                   <p className="text-sm text-neutral-400">{settings.address}</p>
@@ -173,7 +172,7 @@ export default async function Home() {
               </div>
 
               <div className="flex items-center gap-4">
-                <Phone className="h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <Phone className="h-6 w-6 flex-shrink-0 text-brand" />
                 <div>
                   <h5 className="text-sm font-bold uppercase">WhatsApp Admin</h5>
                   <p className="text-sm text-neutral-400">
@@ -183,7 +182,7 @@ export default async function Home() {
               </div>
 
               <div className="flex items-center gap-4">
-                <Mail className="h-6 w-6 flex-shrink-0 text-yellow-400" />
+                <Mail className="h-6 w-6 flex-shrink-0 text-brand" />
                 <div>
                   <h5 className="text-sm font-bold uppercase">Email</h5>
                   <p className="text-sm text-neutral-400">{settings.email}</p>
