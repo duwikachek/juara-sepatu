@@ -54,7 +54,7 @@ export function HeroSection({
         style={{ backgroundColor: "var(--brand-soft)" }}
       />
 
-      {/* KONTEN UTAMA MINIMALIS */}
+      {/* KONTEN UTAMA MINIMALIS DI POSISI TENGAH */}
       <div className="relative z-10 mx-auto max-w-2xl px-6 text-center">
         {/* Judul Utama Minimalis */}
         <h1 className="mb-4 text-3xl font-black uppercase leading-tight tracking-tight text-white drop-shadow-[0_8px_10px_rgba(0,0,0,0.9)] md:text-5xl">
