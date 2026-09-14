@@ -76,24 +76,24 @@ export function HeroSection({
         {/* BAGIAN ATAS: STATISTIK DI KIRI + PARAGRAF EDITORIAL DI KANAN (UKURAN 70%) */}
         <div className="flex flex-col gap-6 pt-4 sm:flex-row sm:items-start sm:justify-between">
           
-          {/* STATS (PERSIS POSISI 90% & 98% DI REFERENSI - FORMAT NORMAL/REGULAR) */}
-          <div className="flex items-center gap-6 sm:gap-10">
+          {/* STATS (DIPERKECIL KE 70% DARI SEBELUMNYA) */}
+          <div className="flex items-center gap-5 sm:gap-8">
             <div>
-              <div className="text-2xl font-normal tracking-tight text-white sm:text-3xl lg:text-[42px]">
+              <div className="text-[17px] font-normal tracking-tight text-white sm:text-[22px] lg:text-[30px]">
                 {stat1Val}
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[7.5px] font-normal uppercase tracking-widest text-neutral-300 sm:text-[8.5px]">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_6px_var(--brand)] animate-pulse" />
+              <div className="mt-0.5 flex items-center gap-1.5 text-[6px] font-normal uppercase tracking-wider text-neutral-300 sm:text-[7px]">
+                <span className="inline-block h-1 w-1 rounded-full bg-brand shadow-[0_0_4px_var(--brand)] animate-pulse" />
                 {stat1Label}
               </div>
             </div>
 
             <div>
-              <div className="text-2xl font-normal tracking-tight text-white sm:text-3xl lg:text-[42px]">
+              <div className="text-[17px] font-normal tracking-tight text-white sm:text-[22px] lg:text-[30px]">
                 {stat2Val}
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[7.5px] font-normal uppercase tracking-widest text-neutral-300 sm:text-[8.5px]">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_6px_var(--brand)]" />
+              <div className="mt-0.5 flex items-center gap-1.5 text-[6px] font-normal uppercase tracking-wider text-neutral-300 sm:text-[7px]">
+                <span className="inline-block h-1 w-1 rounded-full bg-brand shadow-[0_0_4px_var(--brand)]" />
                 {stat2Label}
               </div>
             </div>
