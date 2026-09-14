@@ -18,7 +18,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100] border-b border-neutral-800 bg-neutral-950/90 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+      <div className="flex h-20 w-full items-center justify-between px-8">
         
         {/* LOGO VINTAGE DENGAN PENGAMAN UKURAN */}
         <Link href="/" className="flex items-center transition hover:opacity-80">
@@ -39,7 +39,7 @@ export function SiteHeader() {
         </Link>
 
         {/* NAVIGASI DESKTOP */}
-        <nav className="hidden items-center gap-8 text-sm font-bold uppercase tracking-wider text-neutral-400 md:flex">
+        <nav className="ml-auto hidden items-center gap-8 text-sm font-bold uppercase tracking-wider text-neutral-400 md:flex">
           {links.map((l) => (
             <Link
               key={l.href}

@@ -71,7 +71,7 @@ export function HeroSection({
 
 
       {/* 5. KONTEN GRID UTAMA */}
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-1 flex-col justify-between px-6">
+      <div className="relative z-10 flex h-full w-full flex-1 flex-col justify-between px-8">
         
         {/* BAGIAN ATAS: STATISTIK DI KIRI + PARAGRAF EDITORIAL DI KANAN (UKURAN 70%) */}
         <div className="flex flex-col gap-6 pt-4 sm:flex-row sm:items-start sm:justify-between">

@@ -56,7 +56,7 @@ export function ElasticGallery({
 
   return (
     <div className="w-full py-8 md:py-16">
-      <div className="mx-auto flex h-[500px] w-full max-w-7xl flex-col gap-3 px-4 md:h-[550px] md:flex-row md:gap-4">
+      <div className="flex h-[500px] w-full flex-col gap-3 px-8 md:h-[550px] md:flex-row md:gap-4">
         {list.map((item) => {
           const isActive = activeId === item.id;
           return (

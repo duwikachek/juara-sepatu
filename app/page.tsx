@@ -35,7 +35,7 @@ export default async function Home() {
         id="koleksi"
         className="scroll-mt-24 border-t border-neutral-800 bg-black py-16"
       >
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="w-full px-8">
           <div className="mb-2 flex items-center gap-4">
             <div className="h-8 w-2 bg-brand" />
             <h2 className="text-3xl font-black uppercase tracking-tight">
@@ -52,7 +52,7 @@ export default async function Home() {
       {/* KATALOG */}
       <section
         id="katalog"
-        className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
+        className="w-full scroll-mt-24 border-t border-neutral-800 px-8 py-24"
       >
         <div className="mb-12">
           <div className="mb-2 flex items-center gap-4">
@@ -74,7 +74,7 @@ export default async function Home() {
         id="tentang"
         className="scroll-mt-24 border-t border-neutral-800 bg-neutral-900/40 py-24"
       >
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="w-full px-8">
           <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
             <div>
               <div className="mb-4 flex items-center gap-4">
@@ -138,7 +138,7 @@ export default async function Home() {
       {/* KONTAK */}
       <section
         id="kontak"
-        className="mx-auto max-w-7xl scroll-mt-24 border-t border-neutral-800 px-6 py-24"
+        className="w-full scroll-mt-24 border-t border-neutral-800 px-8 py-24"
       >
         <div className="mb-4 flex items-center gap-4">
           <div className="h-8 w-2 bg-brand" />
