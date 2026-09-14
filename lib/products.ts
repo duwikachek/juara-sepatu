@@ -33,6 +33,12 @@ export interface SiteSettings {
   hero_title_line2: string;
   hero_description: string;
   hero_image: string;
+  hero_stat_1_value?: string;
+  hero_stat_1_label?: string;
+  hero_stat_2_value?: string;
+  hero_stat_2_label?: string;
+  hero_badge_text?: string;
+  hero_badge_tag?: string;
   about_title: string;
   about_body_1: string;
   about_body_2: string;
@@ -65,6 +71,13 @@ export const FALLBACK_SETTINGS: SiteSettings = {
     "Pilihan sepatu bot urban yang kokoh untuk kolektor cerdas. Restorasi premium, terawat sempurna, dan siap pakai.",
   hero_image:
     "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?q=80&w=1920&auto=format&fit=crop",
+  hero_stat_1_value: "100%",
+  hero_stat_1_label: "Thrift Terkurasi",
+  hero_stat_2_value: "98%",
+  hero_stat_2_label: "Kepuasan Pembeli",
+  hero_badge_text:
+    "Kurasi boots kulit second: Red Wing, Dr. Martens, Timberland, Clarks siap pakai.",
+  hero_badge_tag: "ORIGINAL GRADE",
   about_title: "Tentang Kami",
   about_body_1:
     "JUARA SEPATU hadir dari passion mendalam terhadap footwear kulit berkualitas tinggi. Kami percaya sepatu boots terbaik memiliki cerita dan karakter yang semakin indah seiring waktu.",

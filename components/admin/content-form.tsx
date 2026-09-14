@@ -211,8 +211,62 @@ export function ContentForm({ settings }: { settings: SiteSettings }) {
               name="hero_description"
               defaultValue={settings.hero_description}
               textarea
-              rows={4}
+              rows={3}
             />
+
+            {/* Statistik & Ornamen Hero */}
+            <div className="border-t border-neutral-800/80 pt-4">
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-neutral-300">
+                Statistik & Kartu Melayang Hero
+              </p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field
+                  label="Statistik 1 (Nilai)"
+                  name="hero_stat_1_value"
+                  defaultValue={settings.hero_stat_1_value || "100%"}
+                  placeholder="100%"
+                />
+                <Field
+                  label="Statistik 1 (Label)"
+                  name="hero_stat_1_label"
+                  defaultValue={settings.hero_stat_1_label || "Thrift Terkurasi"}
+                  placeholder="Thrift Terkurasi"
+                />
+                <Field
+                  label="Statistik 2 (Nilai)"
+                  name="hero_stat_2_value"
+                  defaultValue={settings.hero_stat_2_value || "98%"}
+                  placeholder="98%"
+                />
+                <Field
+                  label="Statistik 2 (Label)"
+                  name="hero_stat_2_label"
+                  defaultValue={settings.hero_stat_2_label || "Kepuasan Pembeli"}
+                  placeholder="Kepuasan Pembeli"
+                />
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="sm:col-span-2">
+                  <Field
+                    label="Teks Kartu Kanan Bawah"
+                    name="hero_badge_text"
+                    defaultValue={
+                      settings.hero_badge_text ||
+                      "Kurasi boots kulit second: Red Wing, Dr. Martens, Timberland, Clarks siap pakai."
+                    }
+                    placeholder="Kurasi boots kulit second..."
+                  />
+                </div>
+                <div>
+                  <Field
+                    label="Tag Badge Kartu"
+                    name="hero_badge_tag"
+                    defaultValue={settings.hero_badge_tag || "ORIGINAL GRADE"}
+                    placeholder="ORIGINAL GRADE"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <ImagePicker
             label="Foto Latar Hero"

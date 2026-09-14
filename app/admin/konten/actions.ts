@@ -114,6 +114,26 @@ export async function saveSiteContentAction(formData: FormData) {
     hero_description:
       text(formData, "hero_description") || prev.hero_description,
     hero_image: heroImage,
+    hero_stat_1_value:
+      text(formData, "hero_stat_1_value") || prev.hero_stat_1_value || "100%",
+    hero_stat_1_label:
+      text(formData, "hero_stat_1_label") ||
+      prev.hero_stat_1_label ||
+      "Thrift Terkurasi",
+    hero_stat_2_value:
+      text(formData, "hero_stat_2_value") || prev.hero_stat_2_value || "98%",
+    hero_stat_2_label:
+      text(formData, "hero_stat_2_label") ||
+      prev.hero_stat_2_label ||
+      "Kepuasan Pembeli",
+    hero_badge_text:
+      text(formData, "hero_badge_text") ||
+      prev.hero_badge_text ||
+      "Kurasi boots kulit second: Red Wing, Dr. Martens, Timberland, Clarks siap pakai.",
+    hero_badge_tag:
+      text(formData, "hero_badge_tag") ||
+      prev.hero_badge_tag ||
+      "ORIGINAL GRADE",
     about_title: text(formData, "about_title") || prev.about_title,
     about_body_1: text(formData, "about_body_1") || prev.about_body_1,
     about_body_2: text(formData, "about_body_2") || prev.about_body_2,
