@@ -7,7 +7,7 @@ import {
   CircleAlert,
 } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
-import { formatRupiah } from "@/lib/products";
+import { formatRupiah, isVideoUrl } from "@/lib/products";
 import { ProductRowActions } from "@/components/admin/product-row-actions";
 
 type SearchParams = Promise<{
@@ -166,7 +166,10 @@ export default async function AdminProductsPage({
                 </tr>
               ) : (
                 products.map((product) => {
-                  const image = product.images?.[0];
+                  const images = (product.images as string[]) || [];
+                  const image =
+                    images.find((u: string) => !isVideoUrl(u)) || images[0];
+                  const isVid = isVideoUrl(image);
 
                   return (
                     <tr
@@ -177,13 +180,22 @@ export default async function AdminProductsPage({
                         <div className="flex items-center gap-3">
                           <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900">
                             {image ? (
-                              <Image
-                                src={image}
-                                alt={product.name}
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                              />
+                              isVid ? (
+                                <video
+                                  src={image}
+                                  className="h-full w-full object-cover"
+                                  muted
+                                  playsInline
+                                />
+                              ) : (
+                                <Image
+                                  src={image}
+                                  alt={product.name}
+                                  fill
+                                  sizes="56px"
+                                  className="object-cover"
+                                />
+                              )
                             ) : (
                               <div className="flex h-full items-center justify-center text-[10px] text-neutral-600">
                                 No img

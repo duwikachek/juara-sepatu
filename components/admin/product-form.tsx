@@ -10,9 +10,10 @@ import {
   LoaderCircle,
   Save,
   Trash2,
+  Video,
   X,
 } from "lucide-react";
-import type { Product } from "@/lib/products";
+import { isVideoUrl, type Product } from "@/lib/products";
 import {
   createProductAction,
   updateProductAction,
@@ -113,15 +114,39 @@ export function ProductForm({
 
     try {
       const fileList = Array.from(files);
-      const compressedList = await Promise.all(
-        fileList.map((f) => compressImage(f))
-      );
-      setSelectedFiles((prev) => [...prev, ...compressedList]);
+      const validFiles: File[] = [];
 
-      const urls = compressedList.map((f) => URL.createObjectURL(f));
+      for (const f of fileList) {
+        const isImage = f.type.startsWith("image/");
+        const isVideo =
+          f.type.startsWith("video/") || f.name.toLowerCase().endsWith(".mp4");
+
+        if (!isImage && !isVideo) {
+          setError(
+            `Format file tidak didukung: ${f.name}. Gunakan foto atau video MP4.`
+          );
+          continue;
+        }
+
+        if (isVideo && f.size > 50 * 1024 * 1024) {
+          setError(`Video ${f.name} melebihi batas ukuran maksimal 50 MB.`);
+          continue;
+        }
+
+        if (isImage) {
+          validFiles.push(await compressImage(f));
+        } else {
+          validFiles.push(f);
+        }
+      }
+
+      if (validFiles.length === 0) return;
+
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+      const urls = validFiles.map((f) => URL.createObjectURL(f));
       setPreviews((prev) => [...prev, ...urls]);
     } catch {
-      setError("Gagal memproses gambar.");
+      setError("Gagal memproses file media.");
     } finally {
       setCompressing(false);
     }
@@ -153,29 +178,46 @@ export function ProductForm({
     keepImages.forEach((url) => formData.append("keep_images", url));
 
     startTransition(async () => {
-      if (mode === "create") {
-        const result = await createProductAction(formData);
+      try {
+        if (mode === "create") {
+          const result = await createProductAction(formData);
+          if (!result.ok) {
+            setError(result.message);
+            return;
+          }
+          if (result.redirectUrl) {
+            router.push(result.redirectUrl);
+            router.refresh();
+          }
+          return;
+        }
+
+        formData.set("id", product?.id || "");
+        const result = await updateProductAction(formData);
         if (!result.ok) {
           setError(result.message);
           return;
         }
-        if (result.redirectUrl) {
-          router.push(result.redirectUrl);
-          router.refresh();
+        setSuccess(result.message);
+        setSelectedFiles([]);
+        setPreviews([]);
+        router.refresh();
+      } catch (err: unknown) {
+        console.error("Submit error:", err);
+        const msg = err instanceof Error ? err.message : String(err);
+        if (
+          msg.includes("end of form") ||
+          msg.includes("size") ||
+          msg.includes("limit") ||
+          msg.includes("fetch")
+        ) {
+          setError(
+            "Gagal mengunggah media: Ukuran video terlalu besar atau koneksi terputus saat upload. Pastikan video berformat MP4 dan di bawah 50 MB."
+          );
+        } else {
+          setError(`Gagal menyimpan produk: ${msg}`);
         }
-        return;
       }
-
-      formData.set("id", product?.id || "");
-      const result = await updateProductAction(formData);
-      if (!result.ok) {
-        setError(result.message);
-        return;
-      }
-      setSuccess(result.message);
-      setSelectedFiles([]);
-      setPreviews([]);
-      router.refresh();
     });
   };
 
@@ -373,47 +415,64 @@ export function ProductForm({
         <div className="space-y-4">
           <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
             <h2 className="mb-4 text-xs font-bold uppercase tracking-widest text-yellow-400">
-              Foto Produk
+              Foto & Video Produk
             </h2>
 
             {keepImages.length > 0 && (
               <div className="mb-4 grid grid-cols-2 gap-3">
-                {keepImages.map((url) => (
-                  <div
-                    key={url}
-                    className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950"
-                  >
-                    <Image
-                      src={url}
-                      alt="Foto produk"
-                      fill
-                      sizes="160px"
-                      className="object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeKeepImage(url)}
-                      className="absolute right-2 top-2 rounded-full bg-black/70 p-1.5 text-red-400 opacity-100 transition hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100"
-                      title="Hapus foto ini"
+                {keepImages.map((url) => {
+                  const isVid = isVideoUrl(url);
+                  return (
+                    <div
+                      key={url}
+                      className="group relative aspect-square overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
+                      {isVid ? (
+                        <div className="relative h-full w-full">
+                          <video
+                            src={url}
+                            className="h-full w-full object-cover"
+                            muted
+                            playsInline
+                          />
+                          <span className="absolute left-2 top-2 flex items-center gap-1 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase text-black">
+                            <Video className="h-3 w-3" /> MP4
+                          </span>
+                        </div>
+                      ) : (
+                        <Image
+                          src={url}
+                          alt="Foto produk"
+                          fill
+                          sizes="160px"
+                          className="object-cover"
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeKeepImage(url)}
+                        className="absolute right-2 top-2 z-10 rounded-full bg-black/70 p-1.5 text-red-400 opacity-100 transition hover:bg-red-500 hover:text-white md:opacity-0 md:group-hover:opacity-100"
+                        title={isVid ? "Hapus video ini" : "Hapus foto ini"}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-950/60 px-4 py-8 text-center transition hover:border-yellow-400/60">
               <ImagePlus className="h-7 w-7 text-yellow-400" />
               <span className="text-xs font-bold uppercase tracking-widest text-neutral-300">
-                Upload Foto Dari HP / Laptop
+                Upload Foto & Video MP4
               </span>
               <span className="text-[11px] text-neutral-500">
-                Otomatis dikompres & diperkecil
+                Foto otomatis dikompres · Video MP4 max 50 MB
               </span>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,video/mp4,video/*"
                 multiple
                 className="hidden"
                 onChange={(e) => onFilesChange(e.target.files)}
@@ -423,22 +482,43 @@ export function ProductForm({
             {previews.length > 0 && (
               <div className="mt-4">
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                  Preview Foto Dikompres ({previews.length})
+                  Preview Media Baru ({previews.length})
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  {previews.map((url, i) => (
-                    <div
-                      key={i}
-                      className="relative aspect-square overflow-hidden rounded-lg border border-yellow-500/30"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt="Preview"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ))}
+                  {previews.map((url, i) => {
+                    const isVid =
+                      selectedFiles[i]?.type.startsWith("video/") ||
+                      selectedFiles[i]?.name.toLowerCase().endsWith(".mp4") ||
+                      isVideoUrl(url);
+
+                    return (
+                      <div
+                        key={i}
+                        className="relative aspect-square overflow-hidden rounded-lg border border-yellow-500/30 bg-neutral-950"
+                      >
+                        {isVid ? (
+                          <div className="relative h-full w-full">
+                            <video
+                              src={url}
+                              className="h-full w-full object-cover"
+                              muted
+                              playsInline
+                            />
+                            <span className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded bg-yellow-400 px-1 py-0.5 text-[8px] font-black uppercase text-black">
+                              <Video className="h-2.5 w-2.5" /> MP4
+                            </span>
+                          </div>
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={url}
+                            alt="Preview"
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
                 <button
                   type="button"
@@ -452,7 +532,7 @@ export function ProductForm({
           </div>
 
           <p className="text-xs leading-relaxed text-neutral-500">
-            Foto dari kamera HP kamu akan otomatis diperkecil ukurannya sehingga upload di HP sangat cepat dan tidak memicu error server.
+            Foto dari kamera HP akan otomatis diperkecil ukurannya agar cepat diupload. Video MP4 dapat berdurasi pendek/showcase sepatu hingga 50 MB.
           </p>
         </div>
       </div>

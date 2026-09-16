@@ -13,6 +13,7 @@ import {
 import {
   FALLBACK_SETTINGS,
   formatRupiah,
+  isVideoUrl,
   waLink,
   type Product,
 } from "@/lib/products";
@@ -47,7 +48,9 @@ export function OrderForm({
   const [alamat, setAlamat] = useState("");
   const [catatan, setCatatan] = useState("");
 
-  const image = product.images?.[0] || "";
+  const image =
+    product.images?.find((u) => !isVideoUrl(u)) || product.images?.[0] || "";
+  const isVid = isVideoUrl(image);
 
   const waMessage = useMemo(() => {
     if (!done) return "";
@@ -123,14 +126,25 @@ export function OrderForm({
 
         <div className="relative mb-4 aspect-square overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950">
           {image ? (
-            <Image
-              src={image}
-              alt={product.name}
-              fill
-              sizes="(max-width: 1024px) 100vw, 40vw"
-              className="object-cover"
-              priority
-            />
+            isVid ? (
+              <video
+                src={image}
+                className="h-full w-full object-cover"
+                muted
+                playsInline
+                autoPlay
+                loop
+              />
+            ) : (
+              <Image
+                src={image}
+                alt={product.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
+                priority
+              />
+            )
           ) : null}
         </div>
 

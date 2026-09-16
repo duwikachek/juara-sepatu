@@ -1,25 +1,46 @@
 import Link from "next/link";
+import { Video } from "lucide-react";
 import { SafeImage } from "@/components/ui/safe-image";
-import { formatRupiah, type Product } from "@/lib/products";
+import { formatRupiah, isVideoUrl, type Product } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
+  const hasVideo = product.images.some(isVideoUrl);
+  const thumbnail =
+    product.images.find((u) => !isVideoUrl(u)) || product.images[0] || "";
+  const isThumbVideo = isVideoUrl(thumbnail);
+
   return (
     <Link
       href={`/produk/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/40 transition-all duration-300 hover:border-brand hover:bg-neutral-900"
     >
       <div className="relative aspect-square overflow-hidden bg-neutral-950">
-        <SafeImage
-          src={product.images[0]}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
-        />
+        {isThumbVideo ? (
+          <video
+            src={thumbnail}
+            className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
+            muted
+            playsInline
+          />
+        ) : (
+          <SafeImage
+            src={thumbnail}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
+          />
+        )}
 
         <span className="absolute left-3 top-3 rounded bg-brand px-2 py-1 text-[10px] font-black uppercase tracking-wider text-black">
           {product.grade}
         </span>
+
+        {hasVideo && (
+          <span className="absolute right-3 top-3 flex items-center gap-1 rounded bg-black/80 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-yellow-400 border border-yellow-400/40 backdrop-blur-sm shadow-md">
+            <Video className="h-3 w-3" /> Video
+          </span>
+        )}
 
         {product.sold && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70">

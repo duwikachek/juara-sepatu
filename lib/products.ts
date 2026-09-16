@@ -117,3 +117,9 @@ export function getBrands(products: Product[]) {
 export function getAllSizes(products: Product[]) {
   return Array.from(new Set(products.flatMap((p) => p.sizes))).sort();
 }
+
+export function isVideoUrl(url?: string): boolean {
+  if (!url) return false;
+  const clean = url.split("?")[0].toLowerCase();
+  return clean.endsWith(".mp4") || clean.endsWith(".webm") || url.startsWith("data:video/") || url.includes("/video/");
+}

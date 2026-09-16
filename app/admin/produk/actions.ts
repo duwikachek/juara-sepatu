@@ -22,11 +22,18 @@ function parsePrice(raw: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function storagePathFromPublicUrl(url: string): string | null {
-  const marker = "/object/public/product-images/";
-  const i = url.indexOf(marker);
-  if (i === -1) return null;
-  return decodeURIComponent(url.slice(i + marker.length));
+function storageInfoFromPublicUrl(url: string): { bucket: string; path: string } | null {
+  for (const bucket of ["product-images", "site-assets"]) {
+    const marker = `/object/public/${bucket}/`;
+    const i = url.indexOf(marker);
+    if (i !== -1) {
+      return {
+        bucket,
+        path: decodeURIComponent(url.slice(i + marker.length)),
+      };
+    }
+  }
+  return null;
 }
 
 async function uploadProductImages(
@@ -37,30 +44,64 @@ async function uploadProductImages(
 
   for (const file of files) {
     if (!file || file.size === 0) continue;
-    if (!file.type.startsWith("image/")) {
-      throw new Error(`File bukan gambar: ${file.name}`);
+
+    const isImage = file.type.startsWith("image/");
+    const isVideo =
+      file.type.startsWith("video/") ||
+      file.name.toLowerCase().endsWith(".mp4");
+
+    if (!isImage && !isVideo) {
+      throw new Error(
+        `Format file tidak didukung (hanya foto atau video MP4): ${file.name}`
+      );
     }
 
-    const ext =
+    if (isVideo && file.size > 50 * 1024 * 1024) {
+      throw new Error(
+        `Ukuran video terlalu besar (maksimal 50 MB): ${file.name}`
+      );
+    }
+
+    let ext =
       file.name.split(".").pop()?.toLowerCase().replace("jpeg", "jpg") ||
-      "jpg";
+      (isVideo ? "mp4" : "jpg");
+
+    const contentType = isVideo
+      ? "video/mp4"
+      : file.type || "image/jpeg";
+
     const path = `products/${Date.now()}-${Math.random()
       .toString(36)
       .slice(2, 8)}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const { error } = await supabase.storage
-      .from("product-images")
+    // Bucket product-images hanya mengizinkan foto di konfigurasi Supabase.
+    // Video MP4 disimpan di bucket site-assets yang tidak memiliki batasan MIME foto.
+    let targetBucket = isVideo ? "site-assets" : "product-images";
+
+    let uploadRes = await supabase.storage
+      .from(targetBucket)
       .upload(path, buffer, {
-        contentType: file.type,
+        contentType,
         upsert: false,
       });
 
-    if (error) throw new Error(error.message);
+    // Fallback jika bucket mengembalikan error mime type
+    if (uploadRes.error && uploadRes.error.message.toLowerCase().includes("mime")) {
+      targetBucket = targetBucket === "product-images" ? "site-assets" : "product-images";
+      uploadRes = await supabase.storage
+        .from(targetBucket)
+        .upload(path, buffer, {
+          contentType,
+          upsert: false,
+        });
+    }
+
+    if (uploadRes.error) throw new Error(uploadRes.error.message);
 
     const { data } = supabase.storage
-      .from("product-images")
+      .from(targetBucket)
       .getPublicUrl(path);
 
     urls.push(data.publicUrl);
@@ -234,12 +275,12 @@ export async function updateProductAction(formData: FormData) {
     return { ok: false, message: error.message };
   }
 
-  const paths = removed
-    .map(storagePathFromPublicUrl)
-    .filter((p): p is string => !!p);
+  const toRemove = removed
+    .map(storageInfoFromPublicUrl)
+    .filter(Boolean) as { bucket: string; path: string }[];
 
-  if (paths.length > 0) {
-    await supabase.storage.from("product-images").remove(paths);
+  for (const item of toRemove) {
+    await supabase.storage.from(item.bucket).remove([item.path]);
   }
 
   revalidatePath("/admin/produk");
@@ -298,12 +339,12 @@ export async function deleteProductAction(formData: FormData) {
   if (error) return { ok: false, message: error.message };
 
   const images = (product?.images as string[] | null) ?? [];
-  const paths = images
-    .map(storagePathFromPublicUrl)
-    .filter((p): p is string => !!p);
+  const toRemove = images
+    .map(storageInfoFromPublicUrl)
+    .filter(Boolean) as { bucket: string; path: string }[];
 
-  if (paths.length > 0) {
-    await supabase.storage.from("product-images").remove(paths);
+  for (const item of toRemove) {
+    await supabase.storage.from(item.bucket).remove([item.path]);
   }
 
   revalidatePath("/admin/produk");
