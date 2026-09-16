@@ -30,7 +30,7 @@ export default async function Home() {
       {/* HERO SECTION */}
       <HeroSection settings={settings} />
 
-      {/* KOLEKSI SPESIAL */}
+      {/* REFERENSI */}
       <section
         id="koleksi"
         className="scroll-mt-24 border-t border-neutral-800 bg-black py-16"
@@ -39,11 +39,11 @@ export default async function Home() {
           <div className="mb-2 flex items-center gap-4">
             <div className="h-8 w-2 bg-brand" />
             <h2 className="text-3xl font-black uppercase tracking-tight">
-              Koleksi Spesial
+              Referensi
             </h2>
           </div>
           <p className="text-neutral-400">
-            Pilihan boots langka yang baru saja direstorasi.
+            Jadilah diri sendiri untuk kenyaman dan kepercayaan diri anda.
           </p>
         </div>
         <ElasticGallery items={galleryItems} />

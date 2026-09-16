@@ -144,7 +144,7 @@ export function HeroSection({
                 href="#koleksi"
                 className="group flex items-center gap-1.5 px-2 py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-neutral-200 transition hover:text-brand"
               >
-                <span>Lihat Koleksi Spesial</span>
+                <span>Lihat Referensi</span>
                 <span className="transition-transform duration-200 group-hover:translate-x-1 text-brand">
                   →
                 </span>

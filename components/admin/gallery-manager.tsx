@@ -69,7 +69,7 @@ export function GalleryManager({ items }: { items: GalleryItem[] }) {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-black uppercase tracking-tight">
-          Galeri Koleksi Spesial
+          Galeri Referensi
         </h1>
         <p className="mt-2 text-sm text-neutral-400">
           Atur foto, judul, kategori, dan urutan yang tampil di beranda.

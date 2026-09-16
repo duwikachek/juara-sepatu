@@ -165,7 +165,7 @@ export function CatalogSection({ products }: { products: Product[] }) {
         </p>
 
         {result.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {result.map((p) => (
               <ProductCard key={p.slug} product={p} />
             ))}

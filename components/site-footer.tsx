@@ -80,7 +80,7 @@ export function SiteFooter({
             </li>
             <li>
               <Link href="/#koleksi" className="hover:text-brand">
-                Koleksi Spesial
+                Referensi
               </Link>
             </li>
             <li>
