@@ -5,9 +5,11 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "60mb",
     },
+    // Izinkan request body besar (video MP4) melewati proxy/middleware tanpa terpotong
+    proxyClientMaxBodySize: "60mb",
   },
   images: {
-    qualities: [75, 85],
+    qualities: [75, 85, 95],
     remotePatterns: [
       {
         protocol: "https",

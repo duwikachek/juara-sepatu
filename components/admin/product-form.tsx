@@ -209,10 +209,11 @@ export function ProductForm({
           msg.includes("end of form") ||
           msg.includes("size") ||
           msg.includes("limit") ||
-          msg.includes("fetch")
+          msg.includes("fetch") ||
+          msg.includes("unexpected response")
         ) {
           setError(
-            "Gagal mengunggah media: Ukuran video terlalu besar atau koneksi terputus saat upload. Pastikan video berformat MP4 dan di bawah 50 MB."
+            "Gagal mengunggah media: Ukuran video melebihi batas atau koneksi terputus saat upload. Pastikan video berformat MP4 dan di bawah 50 MB."
           );
         } else {
           setError(`Gagal menyimpan produk: ${msg}`);
