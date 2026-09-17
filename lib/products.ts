@@ -93,7 +93,7 @@ export const FALLBACK_SETTINGS: SiteSettings = {
   feature_2_text: "Deep clean, conditioning, dan sterilisasi anti-bakteri.",
   address: "Jl. Pemuda No. 123, Bandung, Jawa Barat",
   whatsapp: "6281234567890",
-  email: "halo@juarasepatu.com",
+  email: "juarasepatu888@gmail.com",
   hours: "Setiap Hari · 10.00 – 21.00 WIB",
   footer_text:
     "Toko boots thrift terkurasi. Setiap pasang melalui sanitasi dan restorasi premium sebelum sampai ke kaki Anda.",

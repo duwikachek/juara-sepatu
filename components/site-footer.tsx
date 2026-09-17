@@ -9,25 +9,6 @@ import {
   type SiteSettings,
 } from "@/lib/products";
 
-function InstagramIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-5 w-5"
-      aria-hidden="true"
-    >
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-    </svg>
-  );
-}
-
 export function SiteFooter({
   settings = FALLBACK_SETTINGS,
 }: {
@@ -37,6 +18,7 @@ export function SiteFooter({
   const year = new Date().getFullYear();
   const phone = settings.whatsapp || FALLBACK_SETTINGS.whatsapp;
   const storeName = settings.store_name || FALLBACK_SETTINGS.store_name;
+  const email = settings.email || FALLBACK_SETTINGS.email || "juarasepatu888@gmail.com";
 
   return (
     <footer className="border-t border-neutral-800 bg-black">
@@ -120,17 +102,7 @@ export function SiteFooter({
             </a>
 
             <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-brand hover:text-brand"
-            >
-              <InstagramIcon />
-            </a>
-
-            <a
-              href={`mailto:${settings.email || FALLBACK_SETTINGS.email}`}
+              href={`mailto:${email}`}
               aria-label="Email"
               className="rounded-lg border border-neutral-800 p-3 text-neutral-400 transition hover:border-brand hover:text-brand"
             >
@@ -144,7 +116,7 @@ export function SiteFooter({
             </p>
             <p>
               <span className="text-neutral-500">Email:</span>{" "}
-              {settings.email || FALLBACK_SETTINGS.email}
+              {email}
             </p>
           </div>
         </div>
