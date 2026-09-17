@@ -1,67 +1,59 @@
-import { redirect } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ShieldCheck, ExternalLink } from "lucide-react";
 import { LogoutButton } from "@/components/admin/logout-button";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, email, role, active")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const allowed =
-    profile?.active === true &&
-    (profile.role === "owner" || profile.role === "staff");
-
-  if (!allowed || !profile) {
-    redirect("/login?error=not-admin");
-  }
+  const { user, profile } = await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-neutral-950 pt-20">
-      <div className="border-b border-neutral-800 bg-neutral-900/70">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="mb-1 flex items-center gap-2 text-yellow-400">
-              <ShieldCheck className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">
-                Panel {profile.role}
-              </span>
+    <div className="min-h-screen bg-neutral-950 pt-16 sm:pt-20">
+      {/* Top bar */}
+      <div className="border-b border-neutral-800 bg-neutral-900/80 backdrop-blur-sm sticky top-0 z-30">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-brand">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Editor Web ({profile.role})
+                </span>
+              </div>
+              <p className="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-none">
+                {profile.full_name || profile.email || user.email}
+              </p>
             </div>
-            <p className="font-bold text-white">
-              {profile.full_name || profile.email || user.email}
-            </p>
-            <p className="text-xs text-neutral-500">
-              {profile.email || user.email}
-            </p>
           </div>
 
-          <LogoutButton />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-800/80 px-3 py-1.5 text-xs font-bold text-neutral-300 transition hover:border-brand hover:text-brand"
+              title="Buka website di tab baru"
+            >
+              <span>Lihat Web</span>
+              <ExternalLink className="h-3 w-3" />
+            </Link>
+
+            <LogoutButton />
+          </div>
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-[230px_1fr]">
-        <aside>
+      {/* Main admin workspace */}
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:grid lg:grid-cols-[220px_1fr] lg:gap-8">
+        <aside className="mb-4 lg:mb-0">
           <AdminSidebar />
         </aside>
 
-        <section>{children}</section>
+        <section className="min-w-0">{children}</section>
       </div>
     </div>
   );

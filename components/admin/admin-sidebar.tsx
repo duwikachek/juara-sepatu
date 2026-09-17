@@ -6,57 +6,50 @@ import {
   Boxes,
   ClipboardList,
   Images,
-  LayoutDashboard,
   NotebookText,
   Palette,
 } from "lucide-react";
 
 function itemClass(active: boolean) {
   return active
-    ? "flex items-center gap-3 rounded-lg bg-brand px-4 py-3 text-sm font-black uppercase tracking-wider text-black"
-    : "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-neutral-300 transition hover:bg-neutral-800 hover:text-brand";
+    ? "flex items-center gap-2 whitespace-nowrap rounded-lg bg-brand px-3.5 py-2.5 text-xs sm:text-sm font-black uppercase tracking-wider text-black shadow-sm"
+    : "flex items-center gap-2 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-400 transition hover:bg-neutral-800 hover:text-brand";
 }
 
 export function AdminSidebar() {
-  const pathname = usePathname() || "/admin";
+  const pathname = usePathname() || "/admin/konten";
 
-  const onDashboard = pathname === "/admin";
+  const onContent = pathname.startsWith("/admin/konten") || pathname === "/admin";
   const onProducts = pathname.startsWith("/admin/produk");
-  const onOrders = pathname.startsWith("/admin/pesanan");
-  const onContent = pathname.startsWith("/admin/konten");
   const onGallery = pathname.startsWith("/admin/galeri");
   const onTheme = pathname.startsWith("/admin/tema");
+  const onOrders = pathname.startsWith("/admin/pesanan");
 
   return (
-    <nav className="space-y-2 rounded-xl border border-neutral-800 bg-neutral-900/50 p-3">
-      <Link href="/admin" className={itemClass(onDashboard)}>
-        <LayoutDashboard className="h-4 w-4" />
-        Dashboard
+    <nav className="flex overflow-x-auto rounded-xl border border-neutral-800 bg-neutral-900/60 p-1.5 sm:p-2 lg:flex-col lg:space-y-1 lg:overflow-visible">
+      <Link href="/admin/konten" className={itemClass(onContent)}>
+        <NotebookText className="h-4 w-4 flex-shrink-0" />
+        <span>Edit Konten</span>
       </Link>
 
       <Link href="/admin/produk" className={itemClass(onProducts)}>
-        <Boxes className="h-4 w-4" />
-        Produk
-      </Link>
-
-      <Link href="/admin/pesanan" className={itemClass(onOrders)}>
-        <ClipboardList className="h-4 w-4" />
-        Pesanan
-      </Link>
-
-      <Link href="/admin/konten" className={itemClass(onContent)}>
-        <NotebookText className="h-4 w-4" />
-        Konten
+        <Boxes className="h-4 w-4 flex-shrink-0" />
+        <span>Produk Sepatu</span>
       </Link>
 
       <Link href="/admin/galeri" className={itemClass(onGallery)}>
-        <Images className="h-4 w-4" />
-        Galeri
+        <Images className="h-4 w-4 flex-shrink-0" />
+        <span>Galeri Foto</span>
       </Link>
 
       <Link href="/admin/tema" className={itemClass(onTheme)}>
-        <Palette className="h-4 w-4" />
-        Tema
+        <Palette className="h-4 w-4 flex-shrink-0" />
+        <span>Tema Warna</span>
+      </Link>
+
+      <Link href="/admin/pesanan" className={itemClass(onOrders)}>
+        <ClipboardList className="h-4 w-4 flex-shrink-0" />
+        <span>Pesanan Masuk</span>
       </Link>
     </nav>
   );

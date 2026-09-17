@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -9,7 +10,7 @@ export type AdminProfile = {
   active: boolean;
 };
 
-export async function requireAdmin() {
+export const requireAdmin = cache(async () => {
   const supabase = await createClient();
 
   const {
@@ -41,7 +42,7 @@ export async function requireAdmin() {
     profile: profile as AdminProfile,
     isOwner: profile.role === "owner",
   };
-}
+});
 
 export function createProductSlug(name: string) {
   return name
