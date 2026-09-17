@@ -1,4 +1,4 @@
-import { ShieldCheck, Sparkles, MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { HeroSection } from "@/components/hero-section";
 import { ElasticGallery } from "@/components/ui/elastic-gallery";
 import { CatalogSection } from "@/components/catalog-section";
@@ -93,7 +93,6 @@ export default async function Home() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-                  <ShieldCheck className="mb-2 h-6 w-6 text-brand" />
                   <h4 className="mb-1 text-sm font-bold uppercase">
                     {settings.feature_1_title}
                   </h4>
@@ -102,7 +101,6 @@ export default async function Home() {
                   </p>
                 </div>
                 <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-                  <Sparkles className="mb-2 h-6 w-6 text-brand" />
                   <h4 className="mb-1 text-sm font-bold uppercase">
                     {settings.feature_2_title}
                   </h4>
