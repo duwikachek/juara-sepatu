@@ -15,8 +15,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     url: SITE_URL,
-    siteName: "Juara Sepatu",
-    title: "Juara Sepatu",
+    title: " ",
     description: " ",
     images: [
       {
@@ -30,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Juara Sepatu",
+    title: " ",
     description: " ",
     images: [`${SITE_URL}/og.jpg`],
   },
