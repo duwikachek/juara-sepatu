@@ -8,29 +8,31 @@ import { getSettings } from "@/lib/data";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://juara-sepatu.vercel.app";
 
 export const metadata: Metadata = {
-  title: {
-    default: "Juara Sepatu — Katalog Boots Thrift Premium",
-    template: "%s | Juara Sepatu",
-  },
-  description:
-    "Toko boots thrift terkurasi. Red Wing, Dr. Martens, Timberland, Clarks — sudah direstorasi premium dan siap pakai.",
-  keywords: [
-    "sepatu thrift",
-    "boots bekas",
-    "red wing",
-    "dr martens",
-    "timberland",
-  ],
-  // metadataBase dibutuhkan agar Next.js bisa resolve URL opengraph-image
+  title: "Juara Sepatu",
+  description: " ",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
     locale: "id_ID",
     url: SITE_URL,
     siteName: "Juara Sepatu",
+    title: "Juara Sepatu",
+    description: " ",
+    images: [
+      {
+        url: `${SITE_URL}/og.jpg`,
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "Juara Sepatu",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    title: "Juara Sepatu",
+    description: " ",
+    images: [`${SITE_URL}/og.jpg`],
   },
 };
 
