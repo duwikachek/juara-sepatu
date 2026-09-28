@@ -1,5 +1,4 @@
 import { MapPin, Phone, Mail } from "lucide-react";
-import { Metadata } from "next";
 import { HeroSection } from "@/components/hero-section";
 import { ElasticGallery } from "@/components/ui/elastic-gallery";
 import { CatalogSection } from "@/components/catalog-section";
@@ -11,41 +10,6 @@ import {
   getSettings,
 } from "@/lib/data";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://juara-sepatu.vercel.app";
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
-  const heroImage = settings.hero_image;
-  const title = `${settings.store_name} — Katalog Boots Thrift Premium`;
-  const description = settings.hero_description;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      type: "website",
-      locale: "id_ID",
-      url: SITE_URL,
-      siteName: settings.store_name,
-      title,
-      description,
-      images: [
-        {
-          url: heroImage,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [heroImage],
-    },
-  };
-}
 
 export default async function Home() {
   const [products, settings, gallery] = await Promise.all([

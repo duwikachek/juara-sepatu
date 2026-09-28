@@ -6,7 +6,6 @@ import { WhatsAppFloat } from "@/components/whatsapp-float";
 import { getSettings } from "@/lib/data";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://juara-sepatu.vercel.app";
-const OG_IMAGE = "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?q=80&w=1200&auto=format&fit=crop";
 
 export const metadata: Metadata = {
   title: {
@@ -22,30 +21,16 @@ export const metadata: Metadata = {
     "dr martens",
     "timberland",
   ],
+  // metadataBase dibutuhkan agar Next.js bisa resolve URL opengraph-image
   metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
     locale: "id_ID",
     url: SITE_URL,
     siteName: "Juara Sepatu",
-    title: "Juara Sepatu — Katalog Boots Thrift Premium",
-    description:
-      "Toko boots thrift terkurasi. Red Wing, Dr. Martens, Timberland, Clarks — sudah direstorasi premium dan siap pakai.",
-    images: [
-      {
-        url: OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: "Juara Sepatu — Katalog Boots Thrift Premium",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Juara Sepatu — Katalog Boots Thrift Premium",
-    description:
-      "Toko boots thrift terkurasi. Red Wing, Dr. Martens, Timberland, Clarks — sudah direstorasi premium dan siap pakai.",
-    images: [OG_IMAGE],
   },
 };
 
