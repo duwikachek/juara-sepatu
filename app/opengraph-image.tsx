@@ -2,10 +2,11 @@ import { ImageResponse } from "next/og";
 import { getSettings } from "@/lib/data";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import sharp from "sharp";
 
 export const alt = "Juara Sepatu — Katalog Boots Thrift Premium";
 export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+export const contentType = "image/jpeg";
 
 // Gambar di-generate secara dinamis (tidak di-cache statis)
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ export default async function Image() {
   const titleLine2 = settings.hero_title_line2 ?? "Boots Thrift";
   const description = settings.hero_description ?? "";
 
-  return new ImageResponse(
+  const imgResponse = new ImageResponse(
     (
       <div
         style={{
@@ -173,4 +174,15 @@ export default async function Image() {
       ],
     }
   );
+
+  const pngBuffer = Buffer.from(await imgResponse.arrayBuffer());
+  const jpegBuffer = await sharp(pngBuffer)
+    .jpeg({ quality: 82, progressive: true })
+    .toBuffer();
+
+  return new Response(jpegBuffer, {
+    headers: {
+      "Content-Type": "image/jpeg",
+    },
+  });
 }
